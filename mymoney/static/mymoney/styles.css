@@ -1,0 +1,19 @@
+.brand {
+  color: rgb(14, 126, 22) !important;
+  font-size: 40px;
+  font-weight: bold;
+  font-family: "Times New Roman", Times, serif;
+}
+
+#signed {
+  margin: auto 10px;
+}
+
+span {
+  font-weight: bold;
+}
+
+#logout {
+  background-color: rgb(14, 126, 22);
+  color: white;
+}/*# sourceMappingURL=styles.css.map */

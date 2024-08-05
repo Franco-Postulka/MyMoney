@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyMoney</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="{% static 'mymoney/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="brand">MyMoney</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="#">Expenses</a>
+                <a class="nav-item nav-link" href="#">Income</a>
+                <a class="nav-item nav-link" href="#">Summary</a>
+                {% if user.is_authenticated %}
+                    <p class="nav-item" id="signed">Signed in as <span>{{user.username}}</span></p>
+                    <a class="btn btn-default" id="logout" href="{% url 'logout' %}">Log out</a>
+                {% else %}
+                    
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    {%block body%}
+    {% endblock %}
+</body>
+</html>
