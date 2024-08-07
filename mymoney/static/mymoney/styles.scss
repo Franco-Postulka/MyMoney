@@ -1,25 +1,26 @@
-$color: rgb(14, 126, 22);
+$mygreen: rgb(14, 126, 22);
+$mygrey: rgb(178, 178, 178);
 
 #brand{
-    color: $color !important;
+    color: $mygreen !important;
     font-size: 35px;
     font-weight: bold;
     font-family: 'Times New Roman', Times, serif;
 }
 #navbar{
     padding: 0 30px;
-    background-color: rgb(178, 178, 178) !important;
+    background-color: $mygrey !important;
 }
 #navbarSupportedContent {
     margin: auto;
     justify-content: flex-end !important;
     display: flex;
-    align-items: center; /* Centra verticalmente */
+    align-items: center; 
 }
 ul.navbar-nav {
     display: flex;
-    align-items: center; /* Centra verticalmente */
-    justify-content: flex-end; /* Alinea a la derecha */
+    align-items: center; 
+    justify-content: flex-end; 
     width: 100%;
     li{
         margin: auto 5px;
@@ -31,7 +32,51 @@ ul.navbar-nav {
 span{
     font-weight: bold;
 }
-#logout{
-    background-color: $color;
+#submit-button{
+    background-color: $mygreen;
+    margin: 10px;
+    border: 1px solid rgb(118, 179, 26);
     color: white;
 }
+#submit-button:hover{
+    background-color: rgb(118, 179, 26);
+}
+
+#login-register{
+    background-color: $mygrey;
+    border-radius: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    form{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+        justify-content: center; 
+        div{
+            margin: 8px 0;
+            width: 100%;
+        }
+    }
+}
+@media (min-width: 700px){
+    #login-register{
+        margin: 40px 30%;
+        padding: 25px 50px;
+    }
+}
+@media (max-width: 700px){
+    #login-register{
+        margin: 40px 20%;
+        padding: 25px 30px;
+    }
+}
+@media (max-width: 500px){
+    #login-register{
+        margin: 40px 10%;
+        padding: 25px 20px;
+    }
+}
+

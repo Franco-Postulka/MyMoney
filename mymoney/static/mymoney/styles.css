@@ -14,13 +14,13 @@
   margin: auto;
   justify-content: flex-end !important;
   display: flex;
-  align-items: center; /* Centra verticalmente */
+  align-items: center;
 }
 
 ul.navbar-nav {
   display: flex;
-  align-items: center; /* Centra verticalmente */
-  justify-content: flex-end; /* Alinea a la derecha */
+  align-items: center;
+  justify-content: flex-end;
   width: 100%;
 }
 ul.navbar-nav li {
@@ -35,7 +35,52 @@ span {
   font-weight: bold;
 }
 
-#logout {
+#submit-button {
   background-color: rgb(14, 126, 22);
+  margin: 10px;
+  border: 1px solid rgb(118, 179, 26);
   color: white;
+}
+
+#submit-button:hover {
+  background-color: rgb(118, 179, 26);
+}
+
+#login-register {
+  background-color: rgb(178, 178, 178);
+  border-radius: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#login-register form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#login-register form div {
+  margin: 8px 0;
+  width: 100%;
+}
+
+@media (min-width: 700px) {
+  #login-register {
+    margin: 40px 30%;
+    padding: 25px 50px;
+  }
+}
+@media (max-width: 700px) {
+  #login-register {
+    margin: 40px 20%;
+    padding: 25px 30px;
+  }
+}
+@media (max-width: 500px) {
+  #login-register {
+    margin: 40px 10%;
+    padding: 25px 20px;
+  }
 }/*# sourceMappingURL=styles.css.map */
