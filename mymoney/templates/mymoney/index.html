@@ -1,5 +1,18 @@
 {% extends "mymoney/layout.html" %}
 
 {%block body%}
+<div id="expenses-list">
+</div>
 
+<div id="expenses-add">
+    <form action="{% url 'index'%}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit">
+    </form>
+    </form>
+</div>
+
+<div id="expenses-analysis">
+</div>
 {% endblock %}

@@ -6,14 +6,18 @@ from django.utils import timezone
 
 class ExpenseCategory(models.Model):
     category = models.CharField(max_length=64)
+    def __str__(self):
+        return self.category
 
 class PaymentMethod(models.Model):
     method = models.CharField(max_length=40)
+    def __str__(self):
+        return self.method
 
 class Expense(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     amount = models.FloatField()
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateField(default=timezone.now)
     #Optionals
     category = models.ForeignKey(ExpenseCategory,on_delete=models.SET_NULL,null=True,blank=True)
     note = models.CharField(max_length=125,blank=True)

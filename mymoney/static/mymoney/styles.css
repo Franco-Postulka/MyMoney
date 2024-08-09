@@ -68,19 +68,19 @@ span {
 
 @media (min-width: 700px) {
   #login-register {
-    margin: 40px 30%;
+    margin: 70px 30%;
     padding: 25px 50px;
   }
 }
 @media (max-width: 700px) {
   #login-register {
-    margin: 40px 20%;
+    margin: 70px 20%;
     padding: 25px 30px;
   }
 }
 @media (max-width: 500px) {
   #login-register {
-    margin: 40px 10%;
+    margin: 90px 10%;
     padding: 25px 20px;
   }
 }/*# sourceMappingURL=styles.css.map */
