@@ -32,17 +32,18 @@ ul.navbar-nav {
 span{
     font-weight: bold;
 }
-#submit-button{
+.btn{
     background-color: $mygreen;
     margin: 10px;
     border: 1px solid rgb(118, 179, 26);
     color: white;
 }
-#submit-button:hover{
+.btn:hover{
     background-color: rgb(118, 179, 26);
+    color: white;
 }
 
-#login-register{
+.div-form{
     background-color: $mygrey;
     border-radius: 10%;
     display: flex;
@@ -62,21 +63,35 @@ span{
     }
 }
 @media (min-width: 700px){
-    #login-register{
+    .div-form{
         margin: 70px 30%;
         padding: 25px 50px;
     }
 }
 @media (max-width: 700px){
-    #login-register{
+    .div-form{
         margin: 70px 20%;
         padding: 25px 30px;
     }
 }
 @media (max-width: 500px){
-    #login-register{
+    .div-form{
         margin: 90px 10%;
         padding: 25px 20px;
     }
 }
+
+#add{
+    div{
+        display: flex;
+        flex-direction: row;
+        background-color: aqua;
+        justify-content: space-between;
+        input,select{
+            width: 60%;
+            align-items: end;
+        }
+    }
+}
+
 

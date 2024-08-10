@@ -4,11 +4,14 @@
 <div id="expenses-list">
 </div>
 
-<div id="expenses-add">
+<div class="div-form" id="add">
     <form action="{% url 'index'%}" method="post">
+        <h1>Add expense</h1>
         {% csrf_token %}
         {{ form }}
-        <input type="submit">
+        <div>
+            <input type="submit" value="Submit" class="btn">
+        </div>
     </form>
     </form>
 </div>

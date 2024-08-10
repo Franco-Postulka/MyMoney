@@ -35,18 +35,19 @@ span {
   font-weight: bold;
 }
 
-#submit-button {
+.btn {
   background-color: rgb(14, 126, 22);
   margin: 10px;
   border: 1px solid rgb(118, 179, 26);
   color: white;
 }
 
-#submit-button:hover {
+.btn:hover {
   background-color: rgb(118, 179, 26);
+  color: white;
 }
 
-#login-register {
+.div-form {
   background-color: rgb(178, 178, 178);
   border-radius: 10%;
   display: flex;
@@ -54,33 +55,43 @@ span {
   align-items: center;
   justify-content: center;
 }
-#login-register form {
+.div-form form {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-#login-register form div {
+.div-form form div {
   margin: 8px 0;
   width: 100%;
 }
 
 @media (min-width: 700px) {
-  #login-register {
+  .div-form {
     margin: 70px 30%;
     padding: 25px 50px;
   }
 }
 @media (max-width: 700px) {
-  #login-register {
+  .div-form {
     margin: 70px 20%;
     padding: 25px 30px;
   }
 }
 @media (max-width: 500px) {
-  #login-register {
+  .div-form {
     margin: 90px 10%;
     padding: 25px 20px;
   }
+}
+#add div {
+  display: flex;
+  flex-direction: row;
+  background-color: aqua;
+  justify-content: space-between;
+}
+#add div input, #add div select {
+  width: 60%;
+  align-items: end;
 }/*# sourceMappingURL=styles.css.map */
