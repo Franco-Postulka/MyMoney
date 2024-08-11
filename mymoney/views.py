@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse 
 from . models import *
 from django.db import IntegrityError
 from django import forms 
+from django.core import serializers
 # Create your views here.
 
 
@@ -100,6 +101,20 @@ def index(request):
         return render(request, "mymoney/index.html",{
             "form": NewTasksForm()
     })
+    else:
+        return HttpResponseRedirect(reverse("login"))
+    
+
+def list(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            # expenses = Expense.objects.filter(user=request.user)
+            expenses = serializers.serialize("json", Expense.objects.filter(user=request.user))
+            return JsonResponse(expenses,safe=False)
+        else:
+            return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
 
