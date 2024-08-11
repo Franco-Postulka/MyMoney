@@ -67,10 +67,10 @@ class NewTasksForm(forms.Form):
         attrs={
             'type': 'date',
         }
-    ))
-    category = forms.ModelChoiceField(queryset=ExpenseCategory.objects.all())
-    note = forms.CharField(max_length=125,required=False)
-    payment_method = forms.ModelChoiceField(queryset=PaymentMethod.objects.all())
+    ),required=True)
+    category = forms.ModelChoiceField(queryset=ExpenseCategory.objects.all(),required=False)
+    payment_method = forms.ModelChoiceField(queryset=PaymentMethod.objects.all(),required=False)
+    note = forms.CharField(widget=forms.Textarea(attrs={"rows":"2"}),required=False,max_length=125)
 
 def index(request):
     if request.user.is_authenticated:

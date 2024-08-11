@@ -1,3 +1,7 @@
+#main-container {
+  margin-top: 70px;
+}
+
 #brand {
   color: rgb(14, 126, 22) !important;
   font-size: 35px;
@@ -67,31 +71,65 @@ span {
   width: 100%;
 }
 
-@media (min-width: 700px) {
+@media (min-height: 700px) {
   .div-form {
-    margin: 70px 30%;
+    margin-top: 140px !important;
+  }
+}
+@media (max-height: 700px) {
+  .div-form {
+    margin-top: 100px !important;
+  }
+}
+@media (min-width: 1200px) {
+  .div-form {
+    margin: auto 30%;
+    padding: 25px 50px;
+  }
+}
+@media (max-width: 1200px) {
+  .div-form {
+    margin: auto 20%;
     padding: 25px 50px;
   }
 }
 @media (max-width: 700px) {
   .div-form {
-    margin: 70px 20%;
+    margin: auto 20%;
     padding: 25px 30px;
   }
 }
 @media (max-width: 500px) {
   .div-form {
-    margin: 90px 10%;
+    margin: auto 10%;
     padding: 25px 20px;
   }
 }
 #add div {
   display: flex;
   flex-direction: row;
-  background-color: aqua;
   justify-content: space-between;
 }
 #add div input, #add div select {
   width: 60%;
   align-items: end;
+  text-align: center;
+}
+#add div label {
+  font-weight: bold;
+}
+#add div:has(textarea) {
+  flex-direction: column;
+  align-items: center;
+}
+#add div:has(textarea) label {
+  margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
+}
+#add div:has(textarea) textarea {
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  resize: none;
 }/*# sourceMappingURL=styles.css.map */
