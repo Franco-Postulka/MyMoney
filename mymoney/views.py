@@ -5,7 +5,9 @@ from django.urls import reverse
 from . models import *
 from django.db import IntegrityError
 from django import forms 
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
+import json
 # Create your views here.
 
 
@@ -62,7 +64,7 @@ def register(request):
         return render(request, "mymoney/register.html")
 
 
-class NewTasksForm(forms.Form):
+class NewExpenseForm(forms.Form):
     amount =  forms.FloatField(required=True)
     date = forms.DateField(widget=forms.DateInput(
         attrs={
@@ -76,7 +78,7 @@ class NewTasksForm(forms.Form):
 def index(request):
     if request.user.is_authenticated:
         if request.method == "POST":
-            form = NewTasksForm(request.POST)
+            form = NewExpenseForm(request.POST)
             if form.is_valid():
                 amount = form.cleaned_data["amount"]
                 date = form.cleaned_data["date"]
@@ -99,22 +101,34 @@ def index(request):
                 })
             
         return render(request, "mymoney/index.html",{
-            "form": NewTasksForm()
+            "form": NewExpenseForm()
     })
     else:
         return HttpResponseRedirect(reverse("login"))
     
 
+
+# @login_required
+# def list(request):
+#     print(f'Request es del tipo: {type(request)}')
+#     if request.method == "GET":
+#         expenses = Expense.objects.filter(user=request.user)
+#         expenses_data = list(expenses.values())
+#         return JsonResponse({'expenses': expenses_data})
+#     else:
+#         return JsonResponse({
+#             "error": "GET or PUT request required."
+#         }, status=400)
+    
 def list(request):
     if request.user.is_authenticated:
         if request.method == "GET":
-            # expenses = Expense.objects.filter(user=request.user)
             expenses = serializers.serialize("json", Expense.objects.filter(user=request.user))
-            return JsonResponse(expenses,safe=False)
+            expenses_json = json.loads(expenses)
+            return JsonResponse(expenses_json,safe=False)
         else:
             return JsonResponse({
             "error": "GET or PUT request required."
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
-

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded',function(){
-    load_section('list')
+    list_expenses();
     document.querySelector('#list').addEventListener('click', () => list_expenses());
     document.querySelector('#add').addEventListener('click', () => load_section('add'));
     document.querySelector('#analysis').addEventListener('click', () => load_section('analysis'));
@@ -21,15 +21,19 @@ function list_expenses(){
 
     fetch('/mymoney/list')
     .then(response => response.json())
-    .then(expenses => {
-        console.log(expenses)
-        const paragraph =document.createElement('p');
-        if (expenses.length > 0){
-            paragraph.innerHTML = 'There are expenses';
-        }else{
-            paragraph.innerHTML = 'No expenses so far';
+    .then(data => {
+        try {
+            console.log(typeof(data)); 
+            if (data.length > 0) {
+                data.forEach(expense => {
+                    console.log(expense.fields.amount);
+                });
+            } else {
+                console.log('NO EXPENSES');
+            }
+        } catch (error) {
+            console.error('Error en forEach:', error);
         }
-        document.querySelector('#list-div').append(paragraph);
     })
 }
 

@@ -7,5 +7,5 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
     #apis
-    path("list",views.list,name="list")
+    path("list/",views.list,name="list")
 ]
