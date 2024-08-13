@@ -5,7 +5,6 @@ from django.urls import reverse
 from . models import *
 from django.db import IntegrityError
 from django import forms 
-from django.contrib.auth.decorators import login_required
 from django.core import serializers
 import json
 # Create your views here.
@@ -107,25 +106,22 @@ def index(request):
         return HttpResponseRedirect(reverse("login"))
     
 
-
-# @login_required
-# def list(request):
-#     print(f'Request es del tipo: {type(request)}')
-#     if request.method == "GET":
-#         expenses = Expense.objects.filter(user=request.user)
-#         expenses_data = list(expenses.values())
-#         return JsonResponse({'expenses': expenses_data})
-#     else:
-#         return JsonResponse({
-#             "error": "GET or PUT request required."
-#         }, status=400)
-    
 def list(request):
     if request.user.is_authenticated:
         if request.method == "GET":
-            expenses = serializers.serialize("json", Expense.objects.filter(user=request.user))
-            expenses_json = json.loads(expenses)
-            return JsonResponse(expenses_json,safe=False)
+            expenses = Expense.objects.filter(user=request.user)
+            arr_expenses = []
+            for expense in expenses:
+                expense_dict = {
+                    "id": expense.id,
+                    "amount": expense.amount,
+                    "date": expense.date,
+                    "note": expense.note,
+                    "category": str(expense.category) if expense.category else None,
+                    "payment_method": str(expense.payment_method) if expense.payment_method else None
+                }
+                arr_expenses.append(expense_dict)
+            return JsonResponse(arr_expenses,safe=False)
         else:
             return JsonResponse({
             "error": "GET or PUT request required."

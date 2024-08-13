@@ -132,4 +132,32 @@ span {
   padding: 10px;
   text-align: left;
   resize: none;
+}
+
+.expense-div {
+  margin: 10px 10%;
+  font-weight: bold;
+  font-size: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: 2px solid rgb(14, 126, 22);
+  border-radius: 5px;
+}
+.expense-div div {
+  padding: 5px;
+  width: 230px;
+}
+.expense-div .amount-div {
+  width: 110px;
+}
+.expense-div .date-div {
+  width: auto;
+}
+
+@media (max-width: 900px) {
+  .expense-div {
+    margin: 10px 5%;
+    font-size: 18px;
+  }
 }/*# sourceMappingURL=styles.css.map */
