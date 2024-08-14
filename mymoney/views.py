@@ -109,7 +109,7 @@ def index(request):
 def list(request):
     if request.user.is_authenticated:
         if request.method == "GET":
-            expenses = Expense.objects.filter(user=request.user)
+            expenses = Expense.objects.filter(user=request.user).order_by('-date')
             arr_expenses = []
             for expense in expenses:
                 expense_dict = {
@@ -125,6 +125,23 @@ def list(request):
         else:
             return JsonResponse({
             "error": "GET or PUT request required."
+        }, status=400)
+    else:
+        return HttpResponseRedirect(reverse("login"))
+
+
+def remove_expense(request, expense_id):
+    if request.user.is_authenticated:
+        if request.method == "DELETE":
+            try:
+                expense = Expense.objects.get(pk=expense_id)
+                expense.delete()
+                return JsonResponse({'ok':'Expense deleted correctly'})
+            except Expense.DoesNotExist:
+                return JsonResponse({'error':f'Expense with the id: {expense_id} does not exists'})
+        else:
+            return JsonResponse({
+            "error": "DELETE request required."
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
