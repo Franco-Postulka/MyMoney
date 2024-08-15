@@ -134,16 +134,26 @@ span {
   resize: none;
 }
 
-.expense-div {
+.expense-container {
   margin: 10px 10%;
+  border: 2px solid rgb(14, 126, 22);
+  border-radius: 5px;
   font-weight: bold;
   font-size: 20px;
   display: flex;
+  flex-direction: column;
+}
+.expense-container .note-div {
+  width: 100%;
+  border: 1px solid black;
+  margin: 4px;
+  justify-content: center;
+}
+
+.expense-div {
+  display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
   justify-content: space-between;
-  border: 2px solid rgb(14, 126, 22);
-  border-radius: 5px;
   animation-name: hide;
   animation-duration: 1s;
   animation-fill-mode: forwards;
@@ -171,11 +181,6 @@ span {
   width: -moz-max-content;
   width: max-content;
 }
-.expense-div .note-div {
-  width: 100%;
-  border: 1px solid black;
-  margin: 4px;
-}
 
 @media (max-width: 900px) {
   .expense-div {
@@ -183,12 +188,12 @@ span {
     font-size: 18px;
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 740px) {
   .payment-div {
     display: none !important;
   }
 }
-@media (max-width: 450px) {
+@media (max-width: 650px) {
   .category-div {
     display: none !important;
   }

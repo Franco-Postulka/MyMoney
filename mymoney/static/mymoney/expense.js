@@ -87,6 +87,9 @@ function list_expenses(){
                     icons_div.className = "icons-div"
                     expense_div.append(icons_div);
 
+                    expense_container = document.createElement('div');
+                    expense_container.className = 'expense-container'; 
+                    expense_container.append(expense_div);
                     //Note of the expense
                     if (expense.note === ""){
                         note_div = document.createElement('div');
@@ -98,9 +101,9 @@ function list_expenses(){
                     note_div.className= 'note-div';
                     note_div.id = `note-${expense.id}`;
                     note_div.style.display = 'none';
-                    expense_div.append(note_div);
 
-                    document.querySelector('#list-div').append(expense_div);
+                    expense_container.append(note_div);
+                    document.querySelector('#list-div').append(expense_container);
                 });
             } else {
                 console.log('NO EXPENSES');
