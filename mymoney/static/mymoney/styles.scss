@@ -137,6 +137,7 @@ span{
     font-size: 20px;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
     border: 2px solid $mygreen;
     border-radius: 5px;
@@ -164,6 +165,11 @@ span{
         display: flex;
         flex-direction: row;
         width: max-content;
+    }
+    .note-div{
+        width: 100%;
+        border: 1px solid black;
+        margin: 4px;
     }
 }
 @media (max-width: 900px){

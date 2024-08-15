@@ -140,6 +140,7 @@ span {
   font-size: 20px;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-between;
   border: 2px solid rgb(14, 126, 22);
   border-radius: 5px;
@@ -169,6 +170,11 @@ span {
   flex-direction: row;
   width: -moz-max-content;
   width: max-content;
+}
+.expense-div .note-div {
+  width: 100%;
+  border: 1px solid black;
+  margin: 4px;
 }
 
 @media (max-width: 900px) {

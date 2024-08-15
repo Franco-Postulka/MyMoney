@@ -24,6 +24,7 @@ function list_expenses(){
     .then(data => {
         try {
             if (data.length > 0) {
+                console.log(data);
                 data.forEach(expense => {
                     expense_div = document.createElement('div');
                     expense_div.className = 'expense-div'; 
@@ -66,6 +67,7 @@ function list_expenses(){
                     //Expand button
                     expand_button = document.createElement('button');
                     expand_button.className = 'btn';
+                    expand_button.onclick = expand;//Functionality
                     expand_icon = document.createElement('i');
                     expand_icon.className = "fa-solid fa-angles-down";
                     expand_button.append(expand_icon);
@@ -73,17 +75,30 @@ function list_expenses(){
                     //delete button
                     delete_button = document.createElement('button');
                     delete_button.className = 'btn';
-                    delete_button.onclick = delete_function;
+                    delete_button.onclick = delete_function;//Functionality
                     delete_icon = document.createElement('i');
                     delete_icon.className = "fa-solid fa-trash-can";
                     delete_button.append(delete_icon);
-                    
+
                     //Icons div
                     icons_div = document.createElement('div');
                     icons_div.append(expand_button);
                     icons_div.append(delete_button);
                     icons_div.className = "icons-div"
                     expense_div.append(icons_div);
+
+                    //Note of the expense
+                    if (expense.note === ""){
+                        note_div = document.createElement('div');
+                        note_div.innerHTML = 'Not note included';
+                    }else{
+                        note_div = document.createElement('div');
+                        note_div.innerHTML = `Note: ${expense.note}`;
+                    }
+                    note_div.className= 'note-div';
+                    note_div.id = `note-${expense.id}`;
+                    note_div.style.display = 'none';
+                    expense_div.append(note_div);
 
                     document.querySelector('#list-div').append(expense_div);
                 });
@@ -124,4 +139,14 @@ function getCSRFToken() {
         }
     }
     return cookieValue;
+}
+
+function expand() {
+    const id = this.parentElement.parentElement.id; 
+    note = document.querySelector(`#note-${id}`);
+    if (note.style.display === 'flex') { 
+        note.style.display = 'none';
+    } else if (note.style.display === 'none') { 
+        note.style.display = 'flex';
+    }
 }
