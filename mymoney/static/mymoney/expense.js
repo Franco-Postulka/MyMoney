@@ -44,18 +44,20 @@ function list_expenses(){
                         category_div = document.createElement('div');
                         category_div.innerHTML = `${expense.category}`;
                     }
-                    category_div.className = 'category-div'
+                    category_div.className = 'category-div';
+                    category_div.id = `category-${expense.id}`;
                     expense_div.append(category_div);
 
                     //Pyment method of the expense
                     if (expense.payment_method === null){
                         payment_div = document.createElement('div');
-                        payment_div.innerHTML = 'No payment method'
+                        payment_div.innerHTML = 'No payment method';
                     }else{
                         payment_div = document.createElement('div');
                         payment_div.innerHTML = `${expense.payment_method}`;
                     }
-                    payment_div.className= 'payment-div'
+                    payment_div.className= 'payment-div';
+                    payment_div.id = `payment-${expense.id}`;
                     expense_div.append(payment_div);
 
                     //Date of the expense
@@ -93,15 +95,28 @@ function list_expenses(){
                     //Note of the expense
                     if (expense.note === ""){
                         note_div = document.createElement('div');
-                        note_div.innerHTML = 'Not note included';
+                        note = document.createElement('div');
+                        note.innerHTML = 'Without note';
+                        note_div.append(note);
                     }else{
                         note_div = document.createElement('div');
-                        note_div.innerHTML = `Note: ${expense.note}`;
+                        note = document.createElement('div');
+                        note.innerHTML = `${expense.note}`;
+                        note_div.append(note);
                     }
                     note_div.className= 'note-div';
                     note_div.id = `note-${expense.id}`;
                     note_div.style.display = 'none';
 
+                    const payment_clone = payment_div.cloneNode(true);
+                    payment_clone.className = 'payment-div-clone';
+                    payment_clone.style.display = 'none';
+                    const category_clone = category_div.cloneNode(true);
+                    category_clone.className = 'category-div-clone';
+                    category_clone.style.display = 'none';
+
+                    note_div.append(category_clone);
+                    note_div.append(payment_clone);
                     expense_container.append(note_div);
                     document.querySelector('#list-div').append(expense_container);
                 });
@@ -124,9 +139,10 @@ function delete_function(){
     })
     .then(response => {
         if(response.ok){
-            this.parentElement.parentElement.style.animationPlayState = 'running';
-            this.parentElement.parentElement.addEventListener('animationend', () => {
-                this.parentElement.parentElement.remove();
+            // console.log(this.parentElement.parentElement);
+            this.parentElement.parentElement.parentElement.style.animationPlayState = 'running';
+            this.parentElement.parentElement.parentElement.addEventListener('animationend', () => {
+                this.parentElement.parentElement.parentElement.remove();
             });
         }
     })
@@ -146,10 +162,11 @@ function getCSRFToken() {
 
 function expand() {
     const id = this.parentElement.parentElement.id; 
-    note = document.querySelector(`#note-${id}`);
+    const note = document.querySelector(`#note-${id}`);
     if (note.style.display === 'flex') { 
         note.style.display = 'none';
     } else if (note.style.display === 'none') { 
         note.style.display = 'flex';
     }
+    
 }
