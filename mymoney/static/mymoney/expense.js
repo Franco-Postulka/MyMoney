@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded',function(){
     list_expenses();
     document.querySelector('#list').addEventListener('click', () => list_expenses());
     document.querySelector('#add').addEventListener('click', () => load_section('add'));
-    document.querySelector('#analysis').addEventListener('click', () => load_section('analysis'));
+    document.querySelector('#analysis').addEventListener('click', () => analysis());
 })
 
 function load_section(section){
@@ -15,6 +15,8 @@ function hide_all_sections(){
     document.querySelector('#add-div').style.display = 'none';
     document.querySelector('#analysis-div').style.display = 'none';
 }
+
+//#region List expenses
 
 function list_expenses(){
     document.querySelector('#list-div').innerHTML = '';
@@ -174,3 +176,58 @@ function expand() {
     }
     
 }
+//#endregion
+
+
+function analysis(){
+    document.querySelector('#analysis-div').innerHTML = '';
+    title = document.createElement('h1');
+    title.innerHTML = 'Analysis';
+    title.className = 'title';
+    document.querySelector('#analysis-div').append(title);
+    load_section('analysis');
+
+    const chart_div = document.createElement('div');
+    chart_div.className = 'chart-div';
+    document.querySelector('#analysis-div').append(chart_div);
+    const chart1 = echarts.init(chart_div);
+    chart1.setOption(getOptionChart1());
+}
+const getOptionChart1 = () => {
+    return {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+            type: 'shadow'
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: [
+            {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            axisTick: {
+                alignWithLabel: true
+            }
+            }
+        ],
+        yAxis: [
+            {
+            type: 'value'
+            }
+        ],
+        series: [
+            {
+            name: 'Direct',
+            type: 'bar',
+            barWidth: '60%',
+            data: [10, 52, 200, 334, 390, 330, 220]
+            }
+        ]
+        };
+    }
