@@ -17,6 +17,11 @@ function hide_all_sections(){
 }
 
 function list_expenses(){
+    document.querySelector('#list-div').innerHTML = '';
+    title = document.createElement('h1');
+    title.innerHTML = 'List of expenses';
+    title.className = 'title';
+    document.querySelector('#list-div').append(title);
     load_section('list');
 
     fetch('/mymoney/list')
@@ -139,7 +144,6 @@ function delete_function(){
     })
     .then(response => {
         if(response.ok){
-            // console.log(this.parentElement.parentElement);
             this.parentElement.parentElement.parentElement.style.animationPlayState = 'running';
             this.parentElement.parentElement.parentElement.addEventListener('animationend', () => {
                 this.parentElement.parentElement.parentElement.remove();
