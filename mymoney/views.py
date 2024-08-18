@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from django import forms 
 from django.core import serializers
 import json
+from datetime import datetime
 # Create your views here.
 
 
@@ -94,6 +95,7 @@ def index(request):
                     payment_method = payment_method
                 )
                 new_expense.save()
+                return HttpResponseRedirect(reverse('index'))
             else:
                 return render(request,"mymoney/index.html",{
                     "form": form
@@ -142,6 +144,45 @@ def remove_expense(request, expense_id):
         else:
             return JsonResponse({
             "error": "DELETE request required."
+        }, status=400)
+    else:
+        return HttpResponseRedirect(reverse("login"))
+    
+
+def expense_per_category(request):
+    # data: [
+    #         { value: 1048, name: 'Search Engine' },
+    #         { value: 735, name: 'Direct' },
+    #         { value: 580, name: 'Email' },
+    #         { value: 484, name: 'Union Ads' },
+    #         { value: 300, name: 'Video Ads' }
+    #     ]
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            date = timezone.now()
+            first_day_of_month = datetime(date.year, date.month, 1).date()
+            expenses = Expense.objects.filter(user=request.user, date__gte=first_day_of_month).order_by('-date')
+            arr_categories = []
+            already_a_dictionary_key = []
+
+            for expense in expenses:
+                if str(expense.category) not in already_a_dictionary_key:
+                    already_a_dictionary_key.append(str(expense.category))
+                    category_dict = {
+                        "value": expense.amount,
+                        "name": str(expense.category) if expense.category else None,
+                    }
+                    arr_categories.append(category_dict)
+                else:
+                    for dictionary in arr_categories:
+                        if dictionary["name"] == str(expense.category):
+                            dictionary["value"] += expense.amount
+                            break
+
+            return JsonResponse(arr_categories,safe=False)
+        else:
+            return JsonResponse({
+            "error": "GET or PUT request required."
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))

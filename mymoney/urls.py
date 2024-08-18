@@ -9,4 +9,5 @@ urlpatterns = [
     #apis
     path("list/",views.list,name="list"),
     path("remove/<int:expense_id>",views.remove_expense,name="remov_expense"),
+    path("expercategory/",views.expense_per_category, name="category_expense"),
 ]

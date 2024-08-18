@@ -31,7 +31,6 @@ function list_expenses(){
     .then(data => {
         try {
             if (data.length > 0) {
-                console.log(data);
                 data.forEach(expense => {
                     expense_div = document.createElement('div');
                     expense_div.className = 'expense-div'; 
@@ -190,43 +189,53 @@ function analysis(){
     const chart_div = document.createElement('div');
     chart_div.className = 'chart-div';
     document.querySelector('#analysis-div').append(chart_div);
-    const chart1 = echarts.init(chart_div);
-    chart1.setOption(getOptionChart1());
+
+    fetch('/mymoney/expercategory')
+    .then(response => response.json())
+    .then(data => {
+            if (data.length > 0) {
+                console.log(data);
+                const chart1 = echarts.init(chart_div);
+                chart1.setOption(getOptionChart1(data));
+            }
+        }
+    );
 }
-const getOptionChart1 = () => {
+const getOptionChart1 = (arr_vlues) => {
     return {
         tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-            type: 'shadow'
-            }
+            trigger: 'item'
         },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
+        legend: {
+            top: '5%',
+            left: 'center'
         },
-        xAxis: [
-            {
-            type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            axisTick: {
-                alignWithLabel: true
-            }
-            }
-        ],
-        yAxis: [
-            {
-            type: 'value'
-            }
-        ],
         series: [
             {
-            name: 'Direct',
-            type: 'bar',
-            barWidth: '60%',
-            data: [10, 52, 200, 334, 390, 330, 220]
+            name: 'Category',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+            },
+            label: {
+                show: false,
+                position: 'center'
+            },
+            emphasis: {
+                label: {
+                show: true,
+                fontSize: 40,
+                fontWeight: 'bold'
+                }
+            },
+            labelLine: {
+                show: false
+            },
+            data: arr_vlues
             }
         ]
         };
