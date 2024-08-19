@@ -8,6 +8,7 @@ from django import forms
 from django.core import serializers
 import json
 from datetime import datetime
+import calendar
 # Create your views here.
 
 
@@ -163,11 +164,11 @@ def expense_per_category(request):
             first_day_of_month = datetime(date.year, date.month, 1).date()
             expenses = Expense.objects.filter(user=request.user, date__gte=first_day_of_month).order_by('-date')
             arr_categories = []
-            already_a_dictionary_key = []
-
+            already_a_dictionary_value = []
+            find_months(request)
             for expense in expenses:
-                if str(expense.category) not in already_a_dictionary_key:
-                    already_a_dictionary_key.append(str(expense.category))
+                if str(expense.category) not in already_a_dictionary_value:
+                    already_a_dictionary_value.append(str(expense.category))
                     category_dict = {
                         "value": expense.amount,
                         "name": str(expense.category) if expense.category else None,
@@ -186,3 +187,30 @@ def expense_per_category(request):
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
+    
+def find_months(request):
+    expenses = Expense.objects.filter(user=request.user).order_by('-date')
+    arr_years_months = []
+    already_a_year_in_dictionary = []
+    for expense in expenses:
+        date = expense.date
+        if date.year not in already_a_year_in_dictionary:
+            dictionary_of_year = {
+                'year': date.year,
+                'months': [date.month]
+            }
+            arr_years_months.append(dictionary_of_year)
+            already_a_year_in_dictionary.append(date.year)
+        else:
+            for dictionary in arr_years_months:
+                if dictionary['year'] == date.year:
+                    if date.month not in dictionary['months']:
+                        dictionary['months'].append(date.month)
+
+    print(arr_years_months)
+    # date = timezone.now()
+    # first_day_date = datetime(date.year, date.month, 1).date()
+    # last_day = calendar.monthrange(date.year, date.month)
+    # last_day_date = datetime(date.year, date.month, last_day[1]).date()
+    # print(first_day_date)
+    # print(last_day_date)
