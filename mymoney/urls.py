@@ -10,4 +10,5 @@ urlpatterns = [
     path("list/",views.list,name="list"),
     path("remove/<int:expense_id>",views.remove_expense,name="remov_expense"),
     path("expercategory/",views.expense_per_category, name="category_expense"),
+    path("periods/",views.get_months_and_years,name='periods'),
 ]

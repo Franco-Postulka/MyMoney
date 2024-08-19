@@ -160,12 +160,15 @@ def expense_per_category(request):
     #     ]
     if request.user.is_authenticated:
         if request.method == "GET":
-            date = timezone.now()
-            first_day_of_month = datetime(date.year, date.month, 1).date()
-            expenses = Expense.objects.filter(user=request.user, date__gte=first_day_of_month).order_by('-date')
+            year = int(request.GET.get('year'))
+            month = int(request.GET.get('month'))
+            # date = timezone.now()
+            first_day_date = datetime(year, month, 1).date()
+            last_day = calendar.monthrange(year, month)
+            last_day_date = datetime(year, month, last_day[1]).date()
+            expenses = Expense.objects.filter(user=request.user, date__gte=first_day_date,date__lte=last_day_date).order_by('-date')
             arr_categories = []
             already_a_dictionary_value = []
-            find_months(request)
             for expense in expenses:
                 if str(expense.category) not in already_a_dictionary_value:
                     already_a_dictionary_value.append(str(expense.category))
@@ -188,26 +191,34 @@ def expense_per_category(request):
     else:
         return HttpResponseRedirect(reverse("login"))
     
-def find_months(request):
-    expenses = Expense.objects.filter(user=request.user).order_by('-date')
-    arr_years_months = []
-    already_a_year_in_dictionary = []
-    for expense in expenses:
-        date = expense.date
-        if date.year not in already_a_year_in_dictionary:
-            dictionary_of_year = {
-                'year': date.year,
-                'months': [date.month]
-            }
-            arr_years_months.append(dictionary_of_year)
-            already_a_year_in_dictionary.append(date.year)
+def get_months_and_years(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            expenses = Expense.objects.filter(user=request.user).order_by('-date')
+            arr_years_months = []
+            already_a_year_in_dictionary = []
+            for expense in expenses:
+                date = expense.date
+                if date.year not in already_a_year_in_dictionary:
+                    dictionary_of_year = {
+                        'year': date.year,
+                        'months': [date.month]
+                    }
+                    arr_years_months.append(dictionary_of_year)
+                    already_a_year_in_dictionary.append(date.year)
+                else:
+                    for dictionary in arr_years_months:
+                        if dictionary['year'] == date.year:
+                            if date.month not in dictionary['months']:
+                                dictionary['months'].append(date.month)
+            return JsonResponse(arr_years_months,safe=False)
         else:
-            for dictionary in arr_years_months:
-                if dictionary['year'] == date.year:
-                    if date.month not in dictionary['months']:
-                        dictionary['months'].append(date.month)
-
-    print(arr_years_months)
+            return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
+    else:
+        return HttpResponseRedirect(reverse("login"))
+    
     # date = timezone.now()
     # first_day_date = datetime(date.year, date.month, 1).date()
     # last_day = calendar.monthrange(date.year, date.month)

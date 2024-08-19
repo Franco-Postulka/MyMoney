@@ -185,16 +185,68 @@ function analysis(){
     title.className = 'title';
     document.querySelector('#analysis-div').append(title);
     load_section('analysis');
+    
+    div_filters = document.createElement('div');
+    div_filters.id = 'div-filters'
+    document.querySelector('#analysis-div').append(div_filters);
+
+    fetch('/mymoney/periods')
+    .then(response => response.json())
+    .then(data => {
+        if (data.length > 0) {
+            console.log(data)
+            // document.querySelector('#analysis-div').append(div_filters);
+            //Select for years
+            const select_year = document.createElement('select');
+            select_year.id = 'select-year';  
+            div_filters.append(select_year);
+            // Options for select year
+            data.forEach(year => {
+                const year_option = document.createElement('option');
+                year_option.value = year['year'];
+                year_option.innerHTML = year['year'];
+                select_year.append(year_option);
+            });
+            //Select for months
+            const select_month = document.createElement('select');
+            select_month.id = 'select-month';
+            div_filters.append(select_month);
+            // Change in select year
+            select_year.addEventListener('change', function() {
+                select_month.innerHTML = '';
+                const selected_year = this.value;
+                let year_months = [];
+                data.forEach(year =>{
+                    if (year['year'] == selected_year){
+                        year_months = year['months'];
+                    }
+                })
+                // Rellenar el select de meses
+                if (year_months) {
+                    year_months.forEach(month => {
+                        const month_option = document.createElement('option');
+                        month_option.value = month;
+                        month_option.innerHTML = month;
+                        select_month.append(month_option);
+                    });
+                }
+            });
+            // Selects the first element of the select 
+            select_year.dispatchEvent(new Event('change'));
+        }else{
+            console.log('No hay gastos')
+        }
+    });
 
     const chart_div = document.createElement('div');
     chart_div.className = 'chart-div';
     document.querySelector('#analysis-div').append(chart_div);
 
-    fetch('/mymoney/expercategory')
+    fetch('/mymoney/expercategory?year=2024&month=8')
     .then(response => response.json())
     .then(data => {
             if (data.length > 0) {
-                console.log(data);
+                // console.log(data);
                 const chart1 = echarts.init(chart_div);
                 chart1.setOption(getOptionChart1(data));
             }

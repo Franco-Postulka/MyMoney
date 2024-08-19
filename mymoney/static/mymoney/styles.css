@@ -245,4 +245,10 @@ span {
   margin: 5%;
   width: 90%;
   min-height: 400px;
+}
+
+#div-filters {
+  display: flex;
+  justify-content: center;
+  margin: auto;
 }/*# sourceMappingURL=styles.css.map */
