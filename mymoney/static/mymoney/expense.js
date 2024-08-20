@@ -221,7 +221,7 @@ function analysis(){
                         year_months = year['months'];
                     }
                 })
-                // Rellenar el select de meses
+                // Fill in the month selection
                 if (year_months) {
                     year_months.forEach(month => {
                         const month_option = document.createElement('option');
@@ -230,30 +230,47 @@ function analysis(){
                         select_month.append(month_option);
                     });
                 }
+                select_date();
             });
+            select_month.addEventListener('change', select_date);
             // Selects the first element of the select 
             select_year.dispatchEvent(new Event('change'));
         }else{
             console.log('No hay gastos')
         }
     });
+}
+
+function select_date(){
+    const selected_month = document.querySelector('#select-month').value;
+    const selected_year = document.querySelector('#select-year').value;
+    console.log(selected_month);
+    console.log(selected_year);
+    make_category_pie(selected_year,selected_month);
+}
+
+function make_category_pie(year, month){
+    const actual_chart_divs = document.querySelector('.chart-div');
+    if (actual_chart_divs){
+        actual_chart_divs.remove();
+    }
+
 
     const chart_div = document.createElement('div');
     chart_div.className = 'chart-div';
     document.querySelector('#analysis-div').append(chart_div);
 
-    fetch('/mymoney/expercategory?year=2024&month=8')
+    fetch(`/mymoney/expercategory?year=${year}&month=${month}`)
     .then(response => response.json())
     .then(data => {
             if (data.length > 0) {
-                // console.log(data);
-                const chart1 = echarts.init(chart_div);
-                chart1.setOption(getOptionChart1(data));
+                const chart = echarts.init(chart_div);
+                chart.setOption(getCategoryPie(data));
             }
         }
     );
 }
-const getOptionChart1 = (arr_vlues) => {
+const getCategoryPie = (arr_vlues) => {
     return {
         tooltip: {
             trigger: 'item'
