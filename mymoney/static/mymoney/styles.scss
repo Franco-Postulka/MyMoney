@@ -237,14 +237,26 @@ span{
     }
 }
 
+.chart-container{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 50%;
+}
 .chart-div{
-    margin: 5%;
-    width: 90%;
+    // margin: 5%;
+    // width: 90%;
+    min-width: 300px;
     min-height: 400px;
 }
 
 #div-filters{
     display: flex;
     justify-content: center;
-    margin:auto;
+    margin-bottom: 20px;
+    *{
+        margin: 0 5px;
+    }
 }

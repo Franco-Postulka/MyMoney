@@ -151,13 +151,6 @@ def remove_expense(request, expense_id):
     
 
 def expense_per_category(request):
-    # data: [
-    #         { value: 1048, name: 'Search Engine' },
-    #         { value: 735, name: 'Direct' },
-    #         { value: 580, name: 'Email' },
-    #         { value: 484, name: 'Union Ads' },
-    #         { value: 300, name: 'Video Ads' }
-    #     ]
     if request.user.is_authenticated:
         if request.method == "GET":
             year = int(request.GET.get('year'))
@@ -191,6 +184,43 @@ def expense_per_category(request):
     else:
         return HttpResponseRedirect(reverse("login"))
     
+
+def expense_per_payment(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            year = int(request.GET.get('year'))
+            month = int(request.GET.get('month'))
+            # date = timezone.now()
+            first_day_date = datetime(year, month, 1).date()
+            last_day = calendar.monthrange(year, month)
+            last_day_date = datetime(year, month, last_day[1]).date()
+            expenses = Expense.objects.filter(user=request.user, date__gte=first_day_date,date__lte=last_day_date).order_by('-date')
+            
+            arr_payment = []
+            already_a_dictionary_value = []
+            for expense in expenses:
+                if str(expense.payment_method) not in already_a_dictionary_value:
+                    already_a_dictionary_value.append(str(expense.payment_method))
+                    payment_dict = {
+                        "value": expense.amount,
+                        "name": str(expense.payment_method) if expense.payment_method else None,
+                    }
+                    arr_payment.append(payment_dict)
+                else:
+                    for dictionary in arr_payment:
+                        if dictionary["name"] == str(expense.payment_method):
+                            dictionary["value"] += expense.amount
+                            break
+
+            return JsonResponse(arr_payment,safe=False)
+        else:
+            return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
+    else:
+        return HttpResponseRedirect(reverse("login"))
+    
+
 def get_months_and_years(request):
     if request.user.is_authenticated:
         if request.method == "GET":

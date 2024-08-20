@@ -187,7 +187,8 @@ function analysis(){
     load_section('analysis');
     
     div_filters = document.createElement('div');
-    div_filters.id = 'div-filters'
+    div_filters.id = 'div-filters';
+    div_filters.innerHTML= 'Filter date: '
     document.querySelector('#analysis-div').append(div_filters);
 
     fetch('/mymoney/periods')
@@ -195,7 +196,6 @@ function analysis(){
     .then(data => {
         if (data.length > 0) {
             console.log(data)
-            // document.querySelector('#analysis-div').append(div_filters);
             //Select for years
             const select_year = document.createElement('select');
             select_year.id = 'select-year';  
@@ -247,30 +247,63 @@ function select_date(){
     console.log(selected_month);
     console.log(selected_year);
     make_category_pie(selected_year,selected_month);
+    make_payment_pie(selected_year,selected_month)
 }
 
 function make_category_pie(year, month){
-    const actual_chart_divs = document.querySelector('.chart-div');
+    const actual_chart_divs = document.querySelector('#chart-category-div');
     if (actual_chart_divs){
         actual_chart_divs.remove();
     }
-
-
     const chart_div = document.createElement('div');
+    chart_div.id = 'chart-category-div';
     chart_div.className = 'chart-div';
-    document.querySelector('#analysis-div').append(chart_div);
+    title = document.createElement('h2');
+    title.innerHTML = 'Category';
+    container_title_chart = document.createElement('div');
+    container_title_chart.append(title);
+    container_title_chart.append(chart_div)
+    container_title_chart.className = 'chart-container';
+    document.querySelector('#analysis-div').append(container_title_chart);
 
     fetch(`/mymoney/expercategory?year=${year}&month=${month}`)
     .then(response => response.json())
     .then(data => {
             if (data.length > 0) {
                 const chart = echarts.init(chart_div);
-                chart.setOption(getCategoryPie(data));
+                chart.setOption(getPie(data));
             }
         }
     );
 }
-const getCategoryPie = (arr_vlues) => {
+function make_payment_pie(year, month){
+    const actual_chart_divs = document.querySelector('#chart-payment-div');
+    if (actual_chart_divs){
+        actual_chart_divs.remove();
+    }
+    const chart_div = document.createElement('div');
+    chart_div.id = 'chart-payment-div';
+    chart_div.className = 'chart-div';
+    title = document.createElement('h2');
+    title.innerHTML = 'Payment Method';
+    container_title_chart = document.createElement('div');
+    container_title_chart.append(title);
+    container_title_chart.append(chart_div);
+    container_title_chart.className = 'chart-container';
+    document.querySelector('#analysis-div').append(container_title_chart);
+
+    fetch(`/mymoney/experpayment?year=${year}&month=${month}`)
+    .then(response => response.json())
+    .then(data => {
+            if (data.length > 0) {
+                const chart = echarts.init(chart_div);
+                chart.setOption(getCompletePie(data));
+            }
+        }
+    );
+}
+
+const getPie = (arr_vlues) => {
     return {
         tooltip: {
             trigger: 'item'
@@ -308,4 +341,36 @@ const getCategoryPie = (arr_vlues) => {
             }
         ]
         };
+    }
+
+const getCompletePie = (arr_vlues) => {
+    return {
+        // title: {
+        // text: 'Referer of a Website',
+        // subtext: 'Fake Data',
+        // left: 'center'
+        // },
+        tooltip: {
+        trigger: 'item'
+        },
+        legend: {
+        orient: 'vertical',
+        left: 'center'
+        },
+        series: [
+        {
+            name: 'Payment Method',
+            type: 'pie',
+            radius: '50%',
+            data: arr_vlues,
+            emphasis: {
+            itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+            }
+        }
+        ]
+    };
     }
