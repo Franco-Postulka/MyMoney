@@ -191,6 +191,11 @@ function analysis(){
     div_filters.innerHTML= 'Filter date: '
     document.querySelector('#analysis-div').append(div_filters);
 
+    main_charts_div = document.createElement('div');
+    main_charts_div.id = 'main-charts-div';
+    document.querySelector('#analysis-div').append(main_charts_div);
+
+
     fetch('/mymoney/periods')
     .then(response => response.json())
     .then(data => {
@@ -246,12 +251,12 @@ function select_date(){
     const selected_year = document.querySelector('#select-year').value;
     console.log(selected_month);
     console.log(selected_year);
+    make_payment_pie(selected_year,selected_month);
     make_category_pie(selected_year,selected_month);
-    make_payment_pie(selected_year,selected_month)
 }
 
 function make_category_pie(year, month){
-    const actual_chart_divs = document.querySelector('#chart-category-div');
+    const actual_chart_divs = document.querySelector('#chart-container-category');
     if (actual_chart_divs){
         actual_chart_divs.remove();
     }
@@ -264,7 +269,8 @@ function make_category_pie(year, month){
     container_title_chart.append(title);
     container_title_chart.append(chart_div)
     container_title_chart.className = 'chart-container';
-    document.querySelector('#analysis-div').append(container_title_chart);
+    container_title_chart.id = 'chart-container-category';
+    document.querySelector('#main-charts-div').append(container_title_chart);
 
     fetch(`/mymoney/expercategory?year=${year}&month=${month}`)
     .then(response => response.json())
@@ -277,7 +283,7 @@ function make_category_pie(year, month){
     );
 }
 function make_payment_pie(year, month){
-    const actual_chart_divs = document.querySelector('#chart-payment-div');
+    const actual_chart_divs = document.querySelector('#chart-container-py');
     if (actual_chart_divs){
         actual_chart_divs.remove();
     }
@@ -290,12 +296,14 @@ function make_payment_pie(year, month){
     container_title_chart.append(title);
     container_title_chart.append(chart_div);
     container_title_chart.className = 'chart-container';
-    document.querySelector('#analysis-div').append(container_title_chart);
+    container_title_chart.id = 'chart-container-py';
+    document.querySelector('#main-charts-div').append(container_title_chart);
 
     fetch(`/mymoney/experpayment?year=${year}&month=${month}`)
     .then(response => response.json())
     .then(data => {
             if (data.length > 0) {
+                console.log(data);
                 const chart = echarts.init(chart_div);
                 chart.setOption(getCompletePie(data));
             }
@@ -345,23 +353,18 @@ const getPie = (arr_vlues) => {
 
 const getCompletePie = (arr_vlues) => {
     return {
-        // title: {
-        // text: 'Referer of a Website',
-        // subtext: 'Fake Data',
-        // left: 'center'
-        // },
         tooltip: {
         trigger: 'item'
         },
         legend: {
-        orient: 'vertical',
-        left: 'center'
+            top: '5%',
+            left: 'center'
         },
         series: [
         {
             name: 'Payment Method',
             type: 'pie',
-            radius: '50%',
+            radius: '70%',
             data: arr_vlues,
             emphasis: {
             itemStyle: {

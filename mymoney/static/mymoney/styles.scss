@@ -236,6 +236,11 @@ span{
         margin-bottom: 0px;
     }
 }
+#main-charts-div{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
 
 .chart-container{
     display: flex;
@@ -246,10 +251,8 @@ span{
     width: 50%;
 }
 .chart-div{
-    // margin: 5%;
-    // width: 90%;
-    min-width: 300px;
-    min-height: 400px;
+    width: 450px;
+    height: 500px;
 }
 
 #div-filters{
@@ -258,5 +261,17 @@ span{
     margin-bottom: 20px;
     *{
         margin: 0 5px;
+    }
+}
+@media(max-width: 800px){
+    .chart-container{
+        width: 100%;
+    }
+    #main-charts-div{
+        flex-direction: column;
+    }
+    .chart-div{
+        width: 350px;
+        height: 450px;
     }
 }

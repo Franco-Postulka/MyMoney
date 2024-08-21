@@ -203,7 +203,7 @@ def expense_per_payment(request):
                     already_a_dictionary_value.append(str(expense.payment_method))
                     payment_dict = {
                         "value": expense.amount,
-                        "name": str(expense.payment_method) if expense.payment_method else None,
+                        "name": str(expense.payment_method) if expense.payment_method else 'Not specified',
                     }
                     arr_payment.append(payment_dict)
                 else:
@@ -248,10 +248,3 @@ def get_months_and_years(request):
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
-    
-    # date = timezone.now()
-    # first_day_date = datetime(date.year, date.month, 1).date()
-    # last_day = calendar.monthrange(date.year, date.month)
-    # last_day_date = datetime(date.year, date.month, last_day[1]).date()
-    # print(first_day_date)
-    # print(last_day_date)
