@@ -107,11 +107,11 @@ def index(request):
                     payment_method = payment_method
                 )
                 new_expense.save()
-                return HttpResponseRedirect(f"{reverse('index')}?section=expenses")
+                return HttpResponseRedirect(f"{reverse('index')}?section=list")
 
                 # return HttpResponseRedirect(reverse('index'))
             else:
-                return render(request,"mymoney/index.html",{
+                return render(request,"mymoney/index.html?section=list",{
                     "epense_form": form,
                     "income_form": NewIncomeForm()
                 })
@@ -140,7 +140,7 @@ def add_income(request):
                     note = note,
                 )
                 new_income.save()
-                return HttpResponseRedirect(f"{reverse('index')}?section=incomes")
+                return HttpResponseRedirect(f"{reverse('index')}?section=list-income")
                 # return HttpResponseRedirect(reverse('index'))
             else:
                 return render(request,"mymoney/index.html",{

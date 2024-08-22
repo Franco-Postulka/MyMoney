@@ -2,9 +2,12 @@ document.addEventListener('DOMContentLoaded',function(){
     const urlParams = new URLSearchParams(window.location.search);
     const section = urlParams.get('section');
 
-    if(section === "incomes"){
+    if(section === "list-income"){
         list_incomes();
-    }else{
+    }else if( section === 'list'){
+        list_expenses();
+    }
+    else{
         list_expenses();
     }
 
@@ -13,33 +16,46 @@ document.addEventListener('DOMContentLoaded',function(){
     document.querySelector('#analysis').addEventListener('click', () => analysis());
     document.querySelector('#add-income').addEventListener('click', () => load_section('add-income'));
     document.querySelector('#list-income').addEventListener('click', () => list_incomes());
+
+    window.onpopstate = function(event) {
+        if (event.state) {
+            const section = event.state.section;
+            if (section === 'add' || section === 'add-income'){
+                load_section(section);
+            }
+            else if (section === 'list-income'){
+                list_incomes();
+            }else if (section === 'list'){
+                list_expenses();
+            }else if (section === 'analysis'){
+                analysis();
+            }
+        }
+    }    
 })
 
 function load_section(section){
     hide_all_sections();
     document.querySelector(`#${section}-div`).style.display = 'block';
-    history.pushState({section: section}, "", `/mymoney`);
+    history.pushState({section: section}, "", `/mymoney?section=${section}`);
 }
 
 function hide_all_sections(){
     document.querySelector('#list-div').style.display = 'none';
+    document.querySelector('#list-income-div').style.display = 'none';
     document.querySelector('#add-div').style.display = 'none';
     document.querySelector('#add-income-div').style.display = 'none';
     document.querySelector('#analysis-div').style.display = 'none';
 }
-// function updateURL(section) {
-//     const newURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?section=${section}`;
-//     history.pushState({ path: newURL }, '', newURL);
-// }
-function list_incomes(){
-    load_section('list');
-    history.pushState({section: 'list_incomes'}, "", `/mymoney`);
 
-    document.querySelector('#list-div').innerHTML = '';
+function list_incomes(){
+    load_section('list-income');
+
+    document.querySelector('#list-income-div').innerHTML = '';
     title = document.createElement('h1');
     title.innerHTML = 'List of incomes';
     title.className = 'title';
-    document.querySelector('#list-div').append(title);
+    document.querySelector('#list-income-div').append(title);
 
     fetch('/mymoney/listincomes')
     .then(response => response.json())
@@ -122,7 +138,7 @@ function list_incomes(){
 
                     note_div.append(category_clone);
                     movement_container.append(note_div);
-                    document.querySelector('#list-div').append(movement_container);
+                    document.querySelector('#list-income-div').append(movement_container);
                 });
             }else{
                 content = document.createElement('div');
@@ -131,7 +147,7 @@ function list_incomes(){
                 movement_container = document.createElement('div');
                 movement_container.className = 'movement-container'; 
                 movement_container.append(content);
-                document.querySelector('#list-div').append(movement_container);
+                document.querySelector('#list-income-div').append(movement_container);
             }
     })
 }
@@ -139,7 +155,6 @@ function list_incomes(){
 
 function list_expenses(){
     load_section('list');
-    history.pushState({section: 'list_expenses'}, "", `/mymoney`);
     document.querySelector('#list-div').innerHTML = '';
     title = document.createElement('h1');
     title.innerHTML = 'List of expenses';
@@ -311,7 +326,6 @@ function expand() {
 
 function analysis(){
     load_section('analysis');
-    history.pushState({section: 'analysis'}, "", `/mymoney`);
 
     document.querySelector('#analysis-div').innerHTML = '';
     title = document.createElement('h1');
@@ -333,7 +347,6 @@ function analysis(){
     .then(response => response.json())
     .then(data => {
         if (data.length > 0) {
-            console.log(data)
             //Select for years
             const select_year = document.createElement('select');
             select_year.id = 'select-year';  
@@ -374,7 +387,13 @@ function analysis(){
             // Selects the first element of the select 
             select_year.dispatchEvent(new Event('change'));
         }else{
-            console.log('No hay gastos')
+            content = document.createElement('div');
+            content.innerHTML = 'No expenses yet';
+            content.style.margin = 'auto';
+            movement_container = document.createElement('div');
+            movement_container.className = 'movement-container'; 
+            movement_container.append(content);
+            document.querySelector('#list-div').append(movement_container);
         }
     });
 }
@@ -382,8 +401,6 @@ function analysis(){
 function select_date(){
     const selected_month = document.querySelector('#select-month').value;
     const selected_year = document.querySelector('#select-year').value;
-    console.log(selected_month);
-    console.log(selected_year);
     make_payment_pie(selected_year,selected_month);
     make_category_pie(selected_year,selected_month);
 }
@@ -436,7 +453,6 @@ function make_payment_pie(year, month){
     .then(response => response.json())
     .then(data => {
             if (data.length > 0) {
-                console.log(data);
                 const chart = echarts.init(chart_div);
                 chart.setOption(getCompletePie(data));
             }
