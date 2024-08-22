@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded',function(){
 function load_section(section){
     hide_all_sections();
     document.querySelector(`#${section}-div`).style.display = 'block';
+    history.pushState({section: section}, "", `/mymoney`);
 }
 
 function hide_all_sections(){
@@ -26,8 +27,13 @@ function hide_all_sections(){
     document.querySelector('#add-income-div').style.display = 'none';
     document.querySelector('#analysis-div').style.display = 'none';
 }
+// function updateURL(section) {
+//     const newURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?section=${section}`;
+//     history.pushState({ path: newURL }, '', newURL);
+// }
 function list_incomes(){
     load_section('list');
+    history.pushState({section: 'list_incomes'}, "", `/mymoney`);
 
     document.querySelector('#list-div').innerHTML = '';
     title = document.createElement('h1');
@@ -119,7 +125,13 @@ function list_incomes(){
                     document.querySelector('#list-div').append(movement_container);
                 });
             }else{
-                console.log('no incomes')
+                content = document.createElement('div');
+                content.innerHTML = 'No incomes yet';
+                content.style.margin = 'auto';
+                movement_container = document.createElement('div');
+                movement_container.className = 'movement-container'; 
+                movement_container.append(content);
+                document.querySelector('#list-div').append(movement_container);
             }
     })
 }
@@ -127,7 +139,7 @@ function list_incomes(){
 
 function list_expenses(){
     load_section('list');
-
+    history.pushState({section: 'list_expenses'}, "", `/mymoney`);
     document.querySelector('#list-div').innerHTML = '';
     title = document.createElement('h1');
     title.innerHTML = 'List of expenses';
@@ -235,7 +247,13 @@ function list_expenses(){
                     document.querySelector('#list-div').append(expense_container);
                 });
             } else {
-                console.log('NO EXPENSES');
+                content = document.createElement('div');
+                content.innerHTML = 'No expenses yet';
+                content.style.margin = 'auto';
+                movement_container = document.createElement('div');
+                movement_container.className = 'movement-container'; 
+                movement_container.append(content);
+                document.querySelector('#list-div').append(movement_container);
             }
         } catch (error) {
             console.error('Error:', error);
@@ -292,12 +310,14 @@ function expand() {
 
 
 function analysis(){
+    load_section('analysis');
+    history.pushState({section: 'analysis'}, "", `/mymoney`);
+
     document.querySelector('#analysis-div').innerHTML = '';
     title = document.createElement('h1');
     title.innerHTML = 'Analysis';
     title.className = 'title';
     document.querySelector('#analysis-div').append(title);
-    load_section('analysis');
     
     div_filters = document.createElement('div');
     div_filters.id = 'div-filters';
