@@ -1,8 +1,18 @@
 document.addEventListener('DOMContentLoaded',function(){
-    list_expenses();
+    const urlParams = new URLSearchParams(window.location.search);
+    const section = urlParams.get('section');
+
+    if(section === "incomes"){
+        list_incomes();
+    }else{
+        list_expenses();
+    }
+
     document.querySelector('#list').addEventListener('click', () => list_expenses());
     document.querySelector('#add').addEventListener('click', () => load_section('add'));
     document.querySelector('#analysis').addEventListener('click', () => analysis());
+    document.querySelector('#add-income').addEventListener('click', () => load_section('add-income'));
+    document.querySelector('#list-income').addEventListener('click', () => list_incomes());
 })
 
 function load_section(section){
@@ -13,18 +23,116 @@ function load_section(section){
 function hide_all_sections(){
     document.querySelector('#list-div').style.display = 'none';
     document.querySelector('#add-div').style.display = 'none';
+    document.querySelector('#add-income-div').style.display = 'none';
     document.querySelector('#analysis-div').style.display = 'none';
 }
+function list_incomes(){
+    load_section('list');
 
+    document.querySelector('#list-div').innerHTML = '';
+    title = document.createElement('h1');
+    title.innerHTML = 'List of incomes';
+    title.className = 'title';
+    document.querySelector('#list-div').append(title);
+
+    fetch('/mymoney/listincomes')
+    .then(response => response.json())
+    .then(data =>{
+            if (data.length > 0){
+                data.forEach(income => {
+                    income_div = document.createElement('div');
+                    income_div.className = 'movement-div'; 
+                    income_div.setAttribute("id", `${income.id}`);
+
+                    //Amount of the income
+                    amount_div = document.createElement('div');
+                    amount_div.innerHTML = `$${income.amount.toLocaleString()} `
+                    amount_div.className = 'amount-div'
+                    income_div.append(amount_div);
+
+                    //Category of the income
+                    if (income.category === null){
+                        category_div = document.createElement('div');
+                        category_div.innerHTML = 'No category'
+                    }else{
+                        category_div = document.createElement('div');
+                        category_div.innerHTML = `${income.category}`;
+                    }
+                    category_div.className = 'category-div';
+                    category_div.id = `category-${income.id}`;
+                    income_div.append(category_div);
+
+                    //Date of the income
+                    date_div = document.createElement('div');
+                    date_div.innerHTML = `${income.date}`
+                    date_div.className = 'date-div'
+                    income_div.append(date_div);
+
+                    //Expand button
+                    expand_button = document.createElement('button');
+                    expand_button.className = 'btn';
+                    expand_button.onclick = expand;//Functionality
+                    expand_icon = document.createElement('i');
+                    expand_icon.className = "fa-solid fa-angles-down";
+                    expand_button.append(expand_icon);
+
+                    //delete button
+                    delete_button = document.createElement('button');
+                    delete_button.className = 'btn';
+                    delete_button.onclick = delete_income;//Functionality
+                    delete_icon = document.createElement('i');
+                    delete_icon.className = "fa-solid fa-trash-can";
+                    delete_button.append(delete_icon);
+
+                    //Icons div
+                    icons_div = document.createElement('div');
+                    icons_div.append(expand_button);
+                    icons_div.append(delete_button);
+                    icons_div.className = "icons-div"
+                    income_div.append(icons_div);
+
+                    movement_container = document.createElement('div');
+                    movement_container.className = 'movement-container'; 
+                    movement_container.append(income_div);
+                    //Note of the income
+                    if (income.note === ""){
+                        note_div = document.createElement('div');
+                        note = document.createElement('div');
+                        note.innerHTML = 'Without note';
+                        note_div.append(note);
+                    }else{
+                        note_div = document.createElement('div');
+                        note = document.createElement('div');
+                        note.innerHTML = `${income.note}`;
+                        note_div.append(note);
+                    }
+                    note_div.className= 'note-div';
+                    note_div.id = `note-${income.id}`;
+                    note_div.style.display = 'none';
+
+                    const category_clone = category_div.cloneNode(true);
+                    category_clone.className = 'category-div-clone';
+                    category_clone.style.display = 'none';
+
+                    note_div.append(category_clone);
+                    movement_container.append(note_div);
+                    document.querySelector('#list-div').append(movement_container);
+                });
+            }else{
+                console.log('no incomes')
+            }
+    })
+}
 //#region List expenses
 
 function list_expenses(){
+    load_section('list');
+
     document.querySelector('#list-div').innerHTML = '';
     title = document.createElement('h1');
     title.innerHTML = 'List of expenses';
     title.className = 'title';
     document.querySelector('#list-div').append(title);
-    load_section('list');
 
     fetch('/mymoney/list')
     .then(response => response.json())
@@ -33,7 +141,7 @@ function list_expenses(){
             if (data.length > 0) {
                 data.forEach(expense => {
                     expense_div = document.createElement('div');
-                    expense_div.className = 'expense-div'; 
+                    expense_div.className = 'movement-div'; 
                     expense_div.setAttribute("id", `${expense.id}`);
 
                     //Amount of the expense
@@ -83,7 +191,7 @@ function list_expenses(){
                     //delete button
                     delete_button = document.createElement('button');
                     delete_button.className = 'btn';
-                    delete_button.onclick = delete_function;//Functionality
+                    delete_button.onclick = delete_expense;//Functionality
                     delete_icon = document.createElement('i');
                     delete_icon.className = "fa-solid fa-trash-can";
                     delete_button.append(delete_icon);
@@ -96,7 +204,7 @@ function list_expenses(){
                     expense_div.append(icons_div);
 
                     expense_container = document.createElement('div');
-                    expense_container.className = 'expense-container'; 
+                    expense_container.className = 'movement-container'; 
                     expense_container.append(expense_div);
                     //Note of the expense
                     if (expense.note === ""){
@@ -134,10 +242,15 @@ function list_expenses(){
         }
     })
 }
-
-function delete_function(){
+function delete_income(){
+    delete_function('remove_income',this);
+}
+function delete_expense(){
+    delete_function('remove',this);
+}
+function delete_function(first_url_part,objeto){
     const csrftoken = getCSRFToken();
-    fetch(`remove/${this.parentElement.parentElement.id}`,{
+    fetch(`${first_url_part}/${objeto.parentElement.parentElement.id}`,{
         method: 'DELETE',
         headers: {
             'X-CSRFToken': csrftoken,  // include the CSRF token
@@ -145,9 +258,9 @@ function delete_function(){
     })
     .then(response => {
         if(response.ok){
-            this.parentElement.parentElement.parentElement.style.animationPlayState = 'running';
-            this.parentElement.parentElement.parentElement.addEventListener('animationend', () => {
-                this.parentElement.parentElement.parentElement.remove();
+            objeto.parentElement.parentElement.parentElement.style.animationPlayState = 'running';
+            objeto.parentElement.parentElement.parentElement.addEventListener('animationend', () => {
+                objeto.parentElement.parentElement.parentElement.remove();
             });
         }
     })
@@ -377,3 +490,5 @@ const getCompletePie = (arr_vlues) => {
         ]
     };
     }
+
+

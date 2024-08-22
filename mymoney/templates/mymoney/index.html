@@ -10,12 +10,25 @@
         <form action="{% url 'index'%}" method="post">
             <h1>Add expense</h1>
             {% csrf_token %}
-            {{ form }}
+            {{ expense_form }}
             <input type="submit" value="Submit" class="btn">
         </form>
         </form>
     </div>
 </div>
+
+<div id="add-income-div">
+    <div class="div-form" id="add">
+        <form action="{% url 'add_income'%}" method="post">
+            <h1>Add income</h1>
+            {% csrf_token %}
+            {{ income_form }}
+            <input type="submit" value="Submit" class="btn">
+        </form>
+        </form>
+    </div>
+</div>
+
 
 <div id="analysis-div">
 </div>

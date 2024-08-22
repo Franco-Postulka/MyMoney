@@ -22,7 +22,7 @@
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="Expenses" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Expenses
                     </a>
                     <ul class="dropdown-menu">
@@ -31,20 +31,26 @@
                         <li><button class="dropdown-item" id="analysis">Analysis</button></li>
                     </ul>
                 </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Income</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Summary</a>
-            </li>
-            {% if user.is_authenticated %}
-                <li class="nav-item" >
-                    <p class="nav-link" id="signed">Signed in as <span>{{user.username}}</span></p>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Income
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><button class="dropdown-item" id="list-income">List of incomes</button></li>
+                        <li><button class="dropdown-item" id="add-income">Add income</button></li>
+                    </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-default" id="submit-button" href="{% url 'logout' %}">Log out</a>
+                    <a class="nav-link" href="#">Summary</a>
                 </li>
-            {% endif %}
+                {% if user.is_authenticated %}
+                    <li class="nav-item" >
+                        <p class="nav-link" id="signed">Signed in as <span>{{user.username}}</span></p>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-default" id="submit-button" href="{% url 'logout' %}">Log out</a>
+                    </li>
+                {% endif %}
             </ul>
     </nav>
     <div id="main-container">

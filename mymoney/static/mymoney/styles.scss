@@ -130,7 +130,7 @@ span{
         }
     }
 }
-.expense-container{
+.movement-container{
     margin: 10px 10%;
     border: 2px solid $mygreen;
     border-radius: 5px;
@@ -157,7 +157,7 @@ span{
     animation-fill-mode: forwards;
     animation-play-state: paused;
 }
-.expense-div{
+.movement-div{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -185,7 +185,7 @@ span{
     
 }
 @media (max-width: 900px){
-    .expense-container{
+    .movement-container{
         margin: 10px 5%;
         font-size: 18px;
     }

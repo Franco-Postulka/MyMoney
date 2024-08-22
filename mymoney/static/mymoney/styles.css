@@ -134,7 +134,7 @@ span {
   resize: none;
 }
 
-.expense-container {
+.movement-container {
   margin: 10px 10%;
   border: 2px solid rgb(14, 126, 22);
   border-radius: 5px;
@@ -148,26 +148,26 @@ span {
   animation-fill-mode: forwards;
   animation-play-state: paused;
 }
-.expense-container .note-div {
+.movement-container .note-div {
   width: 100%;
   border: 1px solid black;
   margin: 5px 0;
   padding: 3px 0;
   justify-content: center;
 }
-.expense-container .note-div * {
+.movement-container .note-div * {
   width: 33%;
   align-items: center;
   text-align: center;
   justify-content: center;
 }
 
-.expense-div {
+.movement-div {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-.expense-div div {
+.movement-div div {
   display: flex;
   align-items: center;
   text-align: center;
@@ -175,15 +175,15 @@ span {
   padding: 5px;
   width: 16%;
 }
-.expense-div .amount-div {
+.movement-div .amount-div {
   width: 110px;
   display: flex;
   flex-direction: row;
 }
-.expense-div .date-div {
+.movement-div .date-div {
   width: auto;
 }
-.expense-div .icons-div {
+.movement-div .icons-div {
   display: flex;
   flex-direction: row;
   width: -moz-max-content;
@@ -191,7 +191,7 @@ span {
 }
 
 @media (max-width: 900px) {
-  .expense-container {
+  .movement-container {
     margin: 10px 5%;
     font-size: 18px;
   }

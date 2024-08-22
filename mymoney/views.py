@@ -76,6 +76,17 @@ class NewExpenseForm(forms.Form):
     payment_method = forms.ModelChoiceField(queryset=PaymentMethod.objects.all(),required=False)
     note = forms.CharField(widget=forms.Textarea(attrs={"rows":"2"}),required=False,max_length=125)
 
+class NewIncomeForm(forms.Form):
+    amount =  forms.FloatField(required=True)
+    date = forms.DateField(widget=forms.DateInput(
+        attrs={
+            'type': 'date',
+        }
+    ),required=True)
+    category = forms.CharField(max_length=64)
+    note = forms.CharField(widget=forms.Textarea(attrs={"rows":"2"}),required=False,max_length=125)
+
+
 def index(request):
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -96,18 +107,53 @@ def index(request):
                     payment_method = payment_method
                 )
                 new_expense.save()
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponseRedirect(f"{reverse('index')}?section=expenses")
+
+                # return HttpResponseRedirect(reverse('index'))
             else:
                 return render(request,"mymoney/index.html",{
-                    "form": form
+                    "epense_form": form,
+                    "income_form": NewIncomeForm()
                 })
-            
         return render(request, "mymoney/index.html",{
-            "form": NewExpenseForm()
+            "expense_form": NewExpenseForm(),
+            "income_form": NewIncomeForm()
     })
     else:
         return HttpResponseRedirect(reverse("login"))
-    
+
+def add_income(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = NewIncomeForm(request.POST)
+            if form.is_valid():
+                amount = form.cleaned_data["amount"]
+                date = form.cleaned_data["date"]
+                category = form.cleaned_data["category"]
+                note = form.cleaned_data["note"]
+
+                new_income = Income(
+                    user = request.user,
+                    amount = amount,
+                    date = date,
+                    category = category,
+                    note = note,
+                )
+                new_income.save()
+                return HttpResponseRedirect(f"{reverse('index')}?section=incomes")
+                # return HttpResponseRedirect(reverse('index'))
+            else:
+                return render(request,"mymoney/index.html",{
+                    "epense_form": NewExpenseForm,
+                    "income_form": form
+                })
+        else:
+            return JsonResponse({
+            "error": "POST request required."
+        }, status=400)
+    else:
+        return HttpResponseRedirect(reverse("login"))
+
 
 def list(request):
     if request.user.is_authenticated:
@@ -127,7 +173,7 @@ def list(request):
             return JsonResponse(arr_expenses,safe=False)
         else:
             return JsonResponse({
-            "error": "GET or PUT request required."
+            "error": "GET request required."
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
@@ -167,7 +213,7 @@ def expense_per_category(request):
                     already_a_dictionary_value.append(str(expense.category))
                     category_dict = {
                         "value": expense.amount,
-                        "name": str(expense.category) if expense.category else None,
+                        "name": str(expense.category) if expense.category else "Not specified",
                     }
                     arr_categories.append(category_dict)
                 else:
@@ -179,7 +225,7 @@ def expense_per_category(request):
             return JsonResponse(arr_categories,safe=False)
         else:
             return JsonResponse({
-            "error": "GET or PUT request required."
+            "error": "GET request required."
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
@@ -215,7 +261,7 @@ def expense_per_payment(request):
             return JsonResponse(arr_payment,safe=False)
         else:
             return JsonResponse({
-            "error": "GET or PUT request required."
+            "error": "GET request required."
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
@@ -244,7 +290,46 @@ def get_months_and_years(request):
             return JsonResponse(arr_years_months,safe=False)
         else:
             return JsonResponse({
-            "error": "GET or PUT request required."
+            "error": "GET request required."
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
+
+def list_incomes(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            incomes = Income.objects.filter(user=request.user).order_by('-date')
+            arr_incomes = []
+            for income in incomes:
+                income_dict = {
+                    "id": income.id,
+                    "amount": income.amount,
+                    "date": income.date,
+                    "note": income.note,
+                    "category": str(income.category) if income.category else None,
+                }
+                arr_incomes.append(income_dict)
+            return JsonResponse(arr_incomes,safe=False)
+        else:
+            return JsonResponse({
+            "error": "GET request required."
+        }, status=400)
+    else:
+        return HttpResponseRedirect(reverse("login"))
+    
+def remove_income(request, income_id):
+    if request.user.is_authenticated:
+        if request.method == "DELETE":
+            try:
+                expense = Income.objects.get(pk=income_id)
+                expense.delete()
+                return JsonResponse({'ok':'Income deleted correctly'})
+            except Income.DoesNotExist:
+                return JsonResponse({'error':f'Income with the id: {income_id} does not exists'})
+        else:
+            return JsonResponse({
+            "error": "DELETE request required."
+        }, status=400)
+    else:
+        return HttpResponseRedirect(reverse("login"))
+    

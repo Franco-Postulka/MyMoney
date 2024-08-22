@@ -26,7 +26,7 @@ class Expense(models.Model):
 class Income(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     amount = models.FloatField()
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateField(default=timezone.now)
     #Optionals
     category = models.CharField(max_length=64,blank=True)
     note = models.CharField(max_length=125,blank=True)
