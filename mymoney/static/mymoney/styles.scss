@@ -241,7 +241,18 @@ span{
     display: flex;
     flex-direction: row;
 }
-
+#main-charts-div-summary{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+#chart-container-vs{
+    width: 100%;
+}
+#chart-div-vs{
+    width: 600px;
+    height: 400px;
+}
 .chart-container{
     display: flex;
     align-items: center;

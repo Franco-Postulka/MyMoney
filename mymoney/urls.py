@@ -15,4 +15,5 @@ urlpatterns = [
     path("addincome/",views.add_income, name="add_income"),
     path("listincomes/",views.list_incomes,name="list_incomes"),
     path("remove_income/<int:income_id>",views.remove_income,name="remove_income"),
+    path("summarygraphics/", views.summary_graphics,name='summary_graphics')
 ]

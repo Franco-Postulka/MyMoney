@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded',function(){
     document.querySelector('#analysis').addEventListener('click', () => analysis());
     document.querySelector('#add-income').addEventListener('click', () => load_section('add-income'));
     document.querySelector('#list-income').addEventListener('click', () => list_incomes());
+    document.querySelector('#summary').addEventListener('click', () => summary());
+
+
 
     window.onpopstate = function(event) {
         if (event.state) {
@@ -46,6 +49,7 @@ function hide_all_sections(){
     document.querySelector('#add-div').style.display = 'none';
     document.querySelector('#add-income-div').style.display = 'none';
     document.querySelector('#analysis-div').style.display = 'none';
+    document.querySelector('#summary-div').style.display = 'none';
 }
 
 function list_incomes(){
@@ -60,6 +64,8 @@ function list_incomes(){
     fetch('/mymoney/listincomes')
     .then(response => response.json())
     .then(data =>{
+        try{
+
             if (data.length > 0){
                 data.forEach(income => {
                     income_div = document.createElement('div');
@@ -71,7 +77,7 @@ function list_incomes(){
                     amount_div.innerHTML = `$${income.amount.toLocaleString()} `
                     amount_div.className = 'amount-div'
                     income_div.append(amount_div);
-
+                    
                     //Category of the income
                     if (income.category === null){
                         category_div = document.createElement('div');
@@ -97,7 +103,7 @@ function list_incomes(){
                     expand_icon = document.createElement('i');
                     expand_icon.className = "fa-solid fa-angles-down";
                     expand_button.append(expand_icon);
-
+                    
                     //delete button
                     delete_button = document.createElement('button');
                     delete_button.className = 'btn';
@@ -131,11 +137,11 @@ function list_incomes(){
                     note_div.className= 'note-div';
                     note_div.id = `note-${income.id}`;
                     note_div.style.display = 'none';
-
+                    
                     const category_clone = category_div.cloneNode(true);
                     category_clone.className = 'category-div-clone';
                     category_clone.style.display = 'none';
-
+                    
                     note_div.append(category_clone);
                     movement_container.append(note_div);
                     document.querySelector('#list-income-div').append(movement_container);
@@ -149,6 +155,10 @@ function list_incomes(){
                 movement_container.append(content);
                 document.querySelector('#list-income-div').append(movement_container);
             }
+        }
+        catch (error) {
+        console.error('Error:', error);
+        }
     })
 }
 //#region List expenses
@@ -283,7 +293,7 @@ function delete_expense(){
 }
 function delete_function(first_url_part,objeto){
     const csrftoken = getCSRFToken();
-    fetch(`${first_url_part}/${objeto.parentElement.parentElement.id}`,{
+    fetch(`mymoney/${first_url_part}/${objeto.parentElement.parentElement.id}`,{
         method: 'DELETE',
         headers: {
             'X-CSRFToken': csrftoken,  // include the CSRF token
@@ -341,7 +351,6 @@ function analysis(){
     main_charts_div = document.createElement('div');
     main_charts_div.id = 'main-charts-div';
     document.querySelector('#analysis-div').append(main_charts_div);
-
 
     fetch('/mymoney/periods')
     .then(response => response.json())
@@ -459,6 +468,117 @@ function make_payment_pie(year, month){
         }
     );
 }
+function summary(){
+    load_section('summary');
+    document.querySelector('#summary-div').innerHTML = '';
+    
+    title = document.createElement('h1');
+    title.innerHTML = 'Summary';
+    title.className = 'title';
+    document.querySelector('#summary-div').append(title);
+
+    main_charts_div = document.createElement('div');
+    main_charts_div.id = 'main-charts-div-summary';
+    document.querySelector('#summary-div').append(main_charts_div);
+
+    make_expense_vs_income_chart();
+}
+
+function make_expense_vs_income_chart(){
+    const actual_chart_divs = document.querySelector('#chart-container-vs');
+    if (actual_chart_divs){
+        actual_chart_divs.remove();
+    }
+    const chart_div = document.createElement('div');
+    chart_div.className = 'chart-div';
+    chart_div.id = 'chart-div-vs';
+    title = document.createElement('h2');
+    title.innerHTML = 'Income vs expenses';
+    container_title_chart = document.createElement('div');
+    // container_title_chart.append(title);
+    container_title_chart.append(chart_div)
+    container_title_chart.className = 'chart-container';
+    container_title_chart.id = 'chart-container-vs';
+    document.querySelector('#main-charts-div-summary').append(container_title_chart);
+
+    fetch("/mymoney/summarygraphics/")
+    .then(response => response.json())
+    .then(data => {
+            console.log(data);
+            if (data) {
+                console.log(data);
+                const chart = echarts.init(chart_div);
+                chart.setOption(get_bar_vs(data));
+            }
+        }
+    );
+}
+
+const get_bar_vs = (dictionary_values) => {
+    return {
+        title: {
+            text: 'Expenses vs Income',
+        },
+        tooltip: {
+        trigger: 'axis'
+        },
+        legend: {
+        data: ['Expenses', 'Incomes']
+        },
+        toolbox: {
+        show: true,
+        feature: {
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ['line', 'bar'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+        }
+        },
+        calculable: true,
+        xAxis: [
+        {
+            type: 'category',
+            // prettier-ignore
+            data: dictionary_values['dates']
+        }
+        ],
+        yAxis: [
+        {
+            type: 'value'
+        }
+        ],
+        series: [
+        {
+            name: 'Expenses',
+            type: 'bar',
+            data: dictionary_values['expenses'],
+            markPoint: {
+            data: [
+                { type: 'max', name: 'Max' },
+                { type: 'min', name: 'Min' }
+            ]
+            },
+            markLine: {
+            data: [{ type: 'average', name: 'Avg' }]
+            }
+        },
+        {
+            name: 'Incomes',
+            type: 'bar',
+            data: dictionary_values['incomes'],
+            markPoint: {
+                data: [
+                    { type: 'max', name: 'Max' },
+                    { type: 'min', name: 'Min' }
+                ]
+            },
+            markLine: {
+            data: [{ type: 'average', name: 'Avg' }]
+            }
+        }
+        ]
+    };
+}
 
 const getPie = (arr_vlues) => {
     return {
@@ -498,7 +618,7 @@ const getPie = (arr_vlues) => {
             }
         ]
         };
-    }
+}
 
 const getCompletePie = (arr_vlues) => {
     return {
@@ -525,6 +645,5 @@ const getCompletePie = (arr_vlues) => {
         }
         ]
     };
-    }
-
+}
 

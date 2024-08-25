@@ -321,8 +321,8 @@ def remove_income(request, income_id):
     if request.user.is_authenticated:
         if request.method == "DELETE":
             try:
-                expense = Income.objects.get(pk=income_id)
-                expense.delete()
+                income = Income.objects.get(pk=income_id)
+                income.delete()
                 return JsonResponse({'ok':'Income deleted correctly'})
             except Income.DoesNotExist:
                 return JsonResponse({'error':f'Income with the id: {income_id} does not exists'})
@@ -333,3 +333,52 @@ def remove_income(request, income_id):
     else:
         return HttpResponseRedirect(reverse("login"))
     
+def summary_graphics(request):
+    if request.user.is_authenticated:
+        if request.method == 'GET':
+            today = timezone.now().date()
+            initial_date = datetime(today.year -1 , today.month, 1).date()
+            dictionary = {
+                'dates': [],
+                'expenses': [],
+                'incomes': []
+            }
+            i = 0
+            while i < 12:
+                i +=1
+                if initial_date.month < 12:
+                    initial_date = datetime(initial_date.year, initial_date.month +1,initial_date.day).date()
+                else:
+                    initial_date = datetime(initial_date.year +1 , 1 ,initial_date.day).date()
+
+                last_day = calendar.monthrange(initial_date.year, initial_date.month)
+                last_day_date = datetime(initial_date.year, initial_date.month, last_day[1]).date()
+
+                incomes_per_month = Income.objects.filter(user=request.user,date__gte=initial_date,date__lte=last_day_date)
+                if not incomes_per_month:
+                    dictionary["incomes"].append(0) #append incomes amount
+                else:
+                    amount_incomes = 0
+                    for income in incomes_per_month:
+                        amount_incomes += income.amount
+                    dictionary["incomes"].append(amount_incomes) #appende incomes amount
+                
+                expenses_per_month = Expense.objects.filter(user=request.user,date__gte=initial_date,date__lte=last_day_date)
+                if not expenses_per_month:
+                    dictionary["expenses"].append(0)#append expeense per month 
+                else:
+                    amount_expenses = 0
+                    for expense in expenses_per_month:
+                        amount_expenses += expense.amount
+                    dictionary["expenses"].append(amount_expenses)#append expeense per month 
+
+                initial_date_str = str(initial_date)[:7]
+                dictionary["dates"].append(initial_date_str) #Append a month 
+
+            return JsonResponse(dictionary,safe=False)
+        else:
+            return JsonResponse({
+                'error': 'GET request required.'
+            },status=400)
+    else:
+        return HttpResponseRedirect(reverse("login"))
