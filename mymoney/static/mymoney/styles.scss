@@ -250,8 +250,8 @@ span{
     width: 100%;
 }
 #chart-div-vs{
-    width: 600px;
-    height: 400px;
+    width: 700px;
+    height: 450px;
 }
 .chart-container{
     display: flex;
@@ -284,5 +284,8 @@ span{
     .chart-div{
         width: 350px;
         height: 450px;
+    }
+    #chart-div-vs{
+        width: 400px;
     }
 }

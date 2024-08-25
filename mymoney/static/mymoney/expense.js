@@ -10,15 +10,12 @@ document.addEventListener('DOMContentLoaded',function(){
     else{
         list_expenses();
     }
-
     document.querySelector('#list').addEventListener('click', () => list_expenses());
     document.querySelector('#add').addEventListener('click', () => load_section('add'));
     document.querySelector('#analysis').addEventListener('click', () => analysis());
     document.querySelector('#add-income').addEventListener('click', () => load_section('add-income'));
     document.querySelector('#list-income').addEventListener('click', () => list_incomes());
     document.querySelector('#summary').addEventListener('click', () => summary());
-
-
 
     window.onpopstate = function(event) {
         if (event.state) {
@@ -65,94 +62,22 @@ function list_incomes(){
     .then(response => response.json())
     .then(data =>{
         try{
-
             if (data.length > 0){
                 data.forEach(income => {
-                    income_div = document.createElement('div');
-                    income_div.className = 'movement-div'; 
-                    income_div.setAttribute("id", `${income.id}`);
-
-                    //Amount of the income
-                    amount_div = document.createElement('div');
-                    amount_div.innerHTML = `$${income.amount.toLocaleString()} `
-                    amount_div.className = 'amount-div'
-                    income_div.append(amount_div);
-                    
-                    //Category of the income
-                    if (income.category === null){
-                        category_div = document.createElement('div');
-                        category_div.innerHTML = 'No category'
-                    }else{
-                        category_div = document.createElement('div');
-                        category_div.innerHTML = `${income.category}`;
-                    }
-                    category_div.className = 'category-div';
-                    category_div.id = `category-${income.id}`;
-                    income_div.append(category_div);
-
-                    //Date of the income
-                    date_div = document.createElement('div');
-                    date_div.innerHTML = `${income.date}`
-                    date_div.className = 'date-div'
-                    income_div.append(date_div);
-
-                    //Expand button
-                    expand_button = document.createElement('button');
-                    expand_button.className = 'btn';
-                    expand_button.onclick = expand;//Functionality
-                    expand_icon = document.createElement('i');
-                    expand_icon.className = "fa-solid fa-angles-down";
-                    expand_button.append(expand_icon);
-                    
-                    //delete button
-                    delete_button = document.createElement('button');
-                    delete_button.className = 'btn';
-                    delete_button.onclick = delete_income;//Functionality
-                    delete_icon = document.createElement('i');
-                    delete_icon.className = "fa-solid fa-trash-can";
-                    delete_button.append(delete_icon);
-
-                    //Icons div
-                    icons_div = document.createElement('div');
-                    icons_div.append(expand_button);
-                    icons_div.append(delete_button);
-                    icons_div.className = "icons-div"
-                    income_div.append(icons_div);
+                    //Top div of the income
+                    income_div = create_movement_div(income,false);
 
                     movement_container = document.createElement('div');
                     movement_container.className = 'movement-container'; 
                     movement_container.append(income_div);
                     //Note of the income
-                    if (income.note === ""){
-                        note_div = document.createElement('div');
-                        note = document.createElement('div');
-                        note.innerHTML = 'Without note';
-                        note_div.append(note);
-                    }else{
-                        note_div = document.createElement('div');
-                        note = document.createElement('div');
-                        note.innerHTML = `${income.note}`;
-                        note_div.append(note);
-                    }
-                    note_div.className= 'note-div';
-                    note_div.id = `note-${income.id}`;
-                    note_div.style.display = 'none';
-                    
-                    const category_clone = category_div.cloneNode(true);
-                    category_clone.className = 'category-div-clone';
-                    category_clone.style.display = 'none';
-                    
-                    note_div.append(category_clone);
+                    note_div = create_note_div(income,false);
+
                     movement_container.append(note_div);
                     document.querySelector('#list-income-div').append(movement_container);
                 });
             }else{
-                content = document.createElement('div');
-                content.innerHTML = 'No incomes yet';
-                content.style.margin = 'auto';
-                movement_container = document.createElement('div');
-                movement_container.className = 'movement-container'; 
-                movement_container.append(content);
+                movement_container = no_info_aclaration('incomes');
                 document.querySelector('#list-income-div').append(movement_container);
             }
         }
@@ -161,8 +86,6 @@ function list_incomes(){
         }
     })
 }
-//#region List expenses
-
 function list_expenses(){
     load_section('list');
     document.querySelector('#list-div').innerHTML = '';
@@ -176,114 +99,129 @@ function list_expenses(){
     .then(data => {
         try {
             if (data.length > 0) {
-                data.forEach(expense => {
-                    expense_div = document.createElement('div');
-                    expense_div.className = 'movement-div'; 
-                    expense_div.setAttribute("id", `${expense.id}`);
-
-                    //Amount of the expense
-                    amount_div = document.createElement('div');
-                    amount_div.innerHTML = `$${expense.amount.toLocaleString()} `
-                    amount_div.className = 'amount-div'
-                    expense_div.append(amount_div);
-
-                    //Category of the expense
-                    if (expense.category === null){
-                        category_div = document.createElement('div');
-                        category_div.innerHTML = 'No category'
-                    }else{
-                        category_div = document.createElement('div');
-                        category_div.innerHTML = `${expense.category}`;
-                    }
-                    category_div.className = 'category-div';
-                    category_div.id = `category-${expense.id}`;
-                    expense_div.append(category_div);
-
-                    //Pyment method of the expense
-                    if (expense.payment_method === null){
-                        payment_div = document.createElement('div');
-                        payment_div.innerHTML = 'No payment method';
-                    }else{
-                        payment_div = document.createElement('div');
-                        payment_div.innerHTML = `${expense.payment_method}`;
-                    }
-                    payment_div.className= 'payment-div';
-                    payment_div.id = `payment-${expense.id}`;
-                    expense_div.append(payment_div);
-
-                    //Date of the expense
-                    date_div = document.createElement('div');
-                    date_div.innerHTML = `${expense.date}`
-                    date_div.className = 'date-div'
-                    expense_div.append(date_div);
-
-                    //Expand button
-                    expand_button = document.createElement('button');
-                    expand_button.className = 'btn';
-                    expand_button.onclick = expand;//Functionality
-                    expand_icon = document.createElement('i');
-                    expand_icon.className = "fa-solid fa-angles-down";
-                    expand_button.append(expand_icon);
-
-                    //delete button
-                    delete_button = document.createElement('button');
-                    delete_button.className = 'btn';
-                    delete_button.onclick = delete_expense;//Functionality
-                    delete_icon = document.createElement('i');
-                    delete_icon.className = "fa-solid fa-trash-can";
-                    delete_button.append(delete_icon);
-
-                    //Icons div
-                    icons_div = document.createElement('div');
-                    icons_div.append(expand_button);
-                    icons_div.append(delete_button);
-                    icons_div.className = "icons-div"
-                    expense_div.append(icons_div);
+                data.forEach(movement => {
+                    //Top div of the expense
+                    expense_div = create_movement_div(movement,true);
 
                     expense_container = document.createElement('div');
                     expense_container.className = 'movement-container'; 
                     expense_container.append(expense_div);
                     //Note of the expense
-                    if (expense.note === ""){
-                        note_div = document.createElement('div');
-                        note = document.createElement('div');
-                        note.innerHTML = 'Without note';
-                        note_div.append(note);
-                    }else{
-                        note_div = document.createElement('div');
-                        note = document.createElement('div');
-                        note.innerHTML = `${expense.note}`;
-                        note_div.append(note);
-                    }
-                    note_div.className= 'note-div';
-                    note_div.id = `note-${expense.id}`;
-                    note_div.style.display = 'none';
+                    note_div = create_note_div(movement,true);
 
-                    const payment_clone = payment_div.cloneNode(true);
-                    payment_clone.className = 'payment-div-clone';
-                    payment_clone.style.display = 'none';
-                    const category_clone = category_div.cloneNode(true);
-                    category_clone.className = 'category-div-clone';
-                    category_clone.style.display = 'none';
-
-                    note_div.append(category_clone);
-                    note_div.append(payment_clone);
                     expense_container.append(note_div);
                     document.querySelector('#list-div').append(expense_container);
                 });
             } else {
-                content = document.createElement('div');
-                content.innerHTML = 'No expenses yet';
-                content.style.margin = 'auto';
-                movement_container = document.createElement('div');
-                movement_container.className = 'movement-container'; 
-                movement_container.append(content);
+                movement_container = no_info_aclaration('expenses');
                 document.querySelector('#list-div').append(movement_container);
             }
         } catch (error) {
             console.error('Error:', error);
         }
     })
+}
+function no_info_aclaration(movement_str){
+    content = document.createElement('div');
+    content.innerHTML = `No ${movement_str} yet`;
+    content.style.margin = 'auto';
+    movement_container = document.createElement('div');
+    movement_container.className = 'movement-container'; 
+    movement_container.append(content);
+    return movement_container;
+}
+function create_note_div(movement,is_expense){
+    if (movement.note === ""){
+        note_div = document.createElement('div');
+        note = document.createElement('div');
+        note.innerHTML = 'Without note';
+        note_div.append(note);
+    }else{
+        note_div = document.createElement('div');
+        note = document.createElement('div');
+        note.innerHTML = `${movement.note}`;
+        note_div.append(note);
+    }
+    note_div.className= 'note-div';
+    note_div.id = `note-${movement.id}`;
+    note_div.style.display = 'none';
+    if (is_expense){
+        const payment_clone = payment_div.cloneNode(true);
+        payment_clone.className = 'payment-div-clone';
+        payment_clone.style.display = 'none';
+        note_div.append(payment_clone);
+    }
+    const category_clone = category_div.cloneNode(true);
+    category_clone.className = 'category-div-clone';
+    category_clone.style.display = 'none';
+    note_div.append(category_clone);
+
+    return note_div;
+}
+function create_movement_div(movement,is_expense){
+    movement_div = document.createElement('div');
+    movement_div.className = 'movement-div'; 
+    movement_div.setAttribute("id", `${movement.id}`);
+
+    amount_div = document.createElement('div');
+    amount_div.innerHTML = `$${movement.amount.toLocaleString()} `
+    amount_div.className = 'amount-div'
+    movement_div.append(amount_div);
+
+    if (movement.category === null){
+        category_div = document.createElement('div');
+        category_div.innerHTML = 'No category'
+    }else{
+        category_div = document.createElement('div');
+        category_div.innerHTML = `${movement.category}`;
+    }
+    category_div.className = 'category-div';
+    movement_div.append(category_div);
+
+    if (is_expense){
+        //Pyment method of the expense
+        if (movement.payment_method === null){
+            payment_div = document.createElement('div');
+            payment_div.innerHTML = 'No payment method';
+        }else{
+            payment_div = document.createElement('div');
+            payment_div.innerHTML = `${movement.payment_method}`;
+        }
+        payment_div.className= 'payment-div';
+        movement_div.append(payment_div);
+    }
+    //Date
+    date_div = document.createElement('div');
+    date_div.innerHTML = `${movement.date}`
+    date_div.className = 'date-div'
+    movement_div.append(date_div);
+    //Expand button
+    expand_button = document.createElement('button');
+    expand_button.className = 'btn';
+    expand_button.onclick = expand;//Functionality
+    expand_icon = document.createElement('i');
+    expand_icon.className = "fa-solid fa-angles-down";
+    expand_button.append(expand_icon);
+    //delete button
+    delete_button = document.createElement('button');
+    delete_button.className = 'btn';
+    if (is_expense){
+        delete_button.onclick = delete_expense;//Functionality
+    }else{
+        delete_button.onclick = delete_income;//Functionality
+    }
+    delete_icon = document.createElement('i');
+    delete_icon.className = "fa-solid fa-trash-can";
+    delete_button.append(delete_icon);
+
+    //Icons div
+    icons_div = document.createElement('div');
+    icons_div.append(expand_button);
+    icons_div.append(delete_button);
+    icons_div.className = "icons-div"
+    movement_div.append(icons_div);
+
+    return movement_div
 }
 function delete_income(){
     delete_function('remove_income',this);
@@ -329,11 +267,7 @@ function expand() {
     } else if (note.style.display === 'none') { 
         note.style.display = 'flex';
     }
-    
 }
-//#endregion
-
-
 function analysis(){
     load_section('analysis');
 
@@ -396,12 +330,7 @@ function analysis(){
             // Selects the first element of the select 
             select_year.dispatchEvent(new Event('change'));
         }else{
-            content = document.createElement('div');
-            content.innerHTML = 'No expenses yet';
-            content.style.margin = 'auto';
-            movement_container = document.createElement('div');
-            movement_container.className = 'movement-container'; 
-            movement_container.append(content);
+            movement_container = no_info_aclaration('expenses');
             document.querySelector('#list-div').append(movement_container);
         }
     });
@@ -420,7 +349,6 @@ function make_category_pie(year, month){
         actual_chart_divs.remove();
     }
     const chart_div = document.createElement('div');
-    chart_div.id = 'chart-category-div';
     chart_div.className = 'chart-div';
     title = document.createElement('h2');
     title.innerHTML = 'Category';
@@ -441,13 +369,13 @@ function make_category_pie(year, month){
         }
     );
 }
+
 function make_payment_pie(year, month){
     const actual_chart_divs = document.querySelector('#chart-container-py');
     if (actual_chart_divs){
         actual_chart_divs.remove();
     }
     const chart_div = document.createElement('div');
-    chart_div.id = 'chart-payment-div';
     chart_div.className = 'chart-div';
     title = document.createElement('h2');
     title.innerHTML = 'Payment Method';
@@ -492,23 +420,22 @@ function make_expense_vs_income_chart(){
     const chart_div = document.createElement('div');
     chart_div.className = 'chart-div';
     chart_div.id = 'chart-div-vs';
-    title = document.createElement('h2');
-    title.innerHTML = 'Income vs expenses';
-    container_title_chart = document.createElement('div');
-    // container_title_chart.append(title);
-    container_title_chart.append(chart_div)
-    container_title_chart.className = 'chart-container';
-    container_title_chart.id = 'chart-container-vs';
-    document.querySelector('#main-charts-div-summary').append(container_title_chart);
+    container_chart = document.createElement('div');
+    container_chart.append(chart_div)
+    container_chart.className = 'chart-container';
+    container_chart.id = 'chart-container-vs';
+    document.querySelector('#main-charts-div-summary').append(container_chart);
 
     fetch("/mymoney/summarygraphics/")
     .then(response => response.json())
     .then(data => {
-            console.log(data);
             if (data) {
-                console.log(data);
                 const chart = echarts.init(chart_div);
-                chart.setOption(get_bar_vs(data));
+                if (window.innerWidth <= 400){
+                    chart.setOption(get_bar_vs_mobile(data));
+                }else{
+                    chart.setOption(get_bar_vs(data));
+                }
             }
         }
     );
@@ -523,12 +450,12 @@ const get_bar_vs = (dictionary_values) => {
         trigger: 'axis'
         },
         legend: {
-        data: ['Expenses', 'Incomes']
+        data: ['Expenses', 'Incomes'],
         },
         toolbox: {
         show: true,
         feature: {
-            dataView: { show: true, readOnly: false },
+            dataView: { show: true, readOnly: true },
             magicType: { show: true, type: ['line', 'bar'] },
             restore: { show: true },
             saveAsImage: { show: true }
@@ -538,7 +465,73 @@ const get_bar_vs = (dictionary_values) => {
         xAxis: [
         {
             type: 'category',
-            // prettier-ignore
+            data: dictionary_values['dates']
+        }
+        ],
+        yAxis: [
+        {
+            type: 'value'
+        }
+        ],
+        series: [
+        {
+            name: 'Expenses',
+            type: 'bar',
+            data: dictionary_values['expenses'],
+            markPoint: {
+            data: [
+                { type: 'max', name: 'Max' },
+                { type: 'min', name: 'Min' }
+            ]
+            },
+            markLine: {
+            data: [{ type: 'average', name: 'Avg' }]
+            }
+        },
+        {
+            name: 'Incomes',
+            type: 'bar',
+            data: dictionary_values['incomes'],
+            markPoint: {
+                data: [
+                    { type: 'max', name: 'Max' },
+                    { type: 'min', name: 'Min' }
+                ]
+            },
+            markLine: {
+            data: [{ type: 'average', name: 'Avg' }]
+            }
+        }
+        ]
+    };
+}
+
+const get_bar_vs_mobile = (dictionary_values) => {
+    return {
+        title: {
+            text: 'Expenses vs Income',
+            show: false
+        },
+        tooltip: {
+        trigger: 'axis'
+        },
+        legend: {
+        data: ['Expenses', 'Incomes'],
+        left: 'left',
+        },
+        toolbox: {
+        show: true,
+        feature: {
+            dataView: { show: true, readOnly: true },
+            magicType: { show: true, type: ['line', 'bar'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+        }
+        },
+        calculable: true,
+        xAxis: [
+        {
+            type: 'category',
             data: dictionary_values['dates']
         }
         ],

@@ -258,8 +258,8 @@ span {
 }
 
 #chart-div-vs {
-  width: 600px;
-  height: 400px;
+  width: 700px;
+  height: 450px;
 }
 
 .chart-container {
@@ -295,5 +295,8 @@ span {
   .chart-div {
     width: 350px;
     height: 450px;
+  }
+  #chart-div-vs {
+    width: 400px;
   }
 }/*# sourceMappingURL=styles.css.map */
