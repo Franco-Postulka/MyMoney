@@ -1,3 +1,4 @@
+//#region Eventlisteners and load sections
 document.addEventListener('DOMContentLoaded',function(){
     const urlParams = new URLSearchParams(window.location.search);
     const section = urlParams.get('section');
@@ -33,13 +34,11 @@ document.addEventListener('DOMContentLoaded',function(){
         }
     }    
 })
-
 function load_section(section){
     hide_all_sections();
     document.querySelector(`#${section}-div`).style.display = 'block';
     history.pushState({section: section}, "", `/mymoney?section=${section}`);
 }
-
 function hide_all_sections(){
     document.querySelector('#list-div').style.display = 'none';
     document.querySelector('#list-income-div').style.display = 'none';
@@ -48,7 +47,9 @@ function hide_all_sections(){
     document.querySelector('#analysis-div').style.display = 'none';
     document.querySelector('#summary-div').style.display = 'none';
 }
+//#endregion
 
+//#region List expenses and income functions
 function list_incomes(){
     load_section('list-income');
 
@@ -213,7 +214,6 @@ function create_movement_div(movement,is_expense){
     delete_icon = document.createElement('i');
     delete_icon.className = "fa-solid fa-trash-can";
     delete_button.append(delete_icon);
-
     //Icons div
     icons_div = document.createElement('div');
     icons_div.append(expand_button);
@@ -258,7 +258,6 @@ function getCSRFToken() {
     }
     return cookieValue;
 }
-
 function expand() {
     const id = this.parentElement.parentElement.id; 
     const note = document.querySelector(`#note-${id}`);
@@ -268,6 +267,9 @@ function expand() {
         note.style.display = 'flex';
     }
 }
+//#endregion
+
+//#region Analysis functions
 function analysis(){
     load_section('analysis');
 
@@ -335,14 +337,12 @@ function analysis(){
         }
     });
 }
-
 function select_date(){
     const selected_month = document.querySelector('#select-month').value;
     const selected_year = document.querySelector('#select-year').value;
     make_payment_pie(selected_year,selected_month);
     make_category_pie(selected_year,selected_month);
 }
-
 function make_category_pie(year, month){
     const actual_chart_divs = document.querySelector('#chart-container-category');
     if (actual_chart_divs){
@@ -369,7 +369,6 @@ function make_category_pie(year, month){
         }
     );
 }
-
 function make_payment_pie(year, month){
     const actual_chart_divs = document.querySelector('#chart-container-py');
     if (actual_chart_divs){
@@ -396,6 +395,74 @@ function make_payment_pie(year, month){
         }
     );
 }
+const getPie = (arr_vlues) => {
+    return {
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            top: '5%',
+            left: 'center'
+        },
+        series: [
+            {
+            name: 'Category',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+                borderRadius: 10,
+                borderColor: '#fff',
+                borderWidth: 2
+            },
+            label: {
+                show: false,
+                position: 'center'
+            },
+            emphasis: {
+                label: {
+                show: true,
+                fontSize: 40,
+                fontWeight: 'bold'
+                }
+            },
+            labelLine: {
+                show: false
+            },
+            data: arr_vlues
+            }
+        ]
+        };
+}
+const getCompletePie = (arr_vlues) => {
+    return {
+        tooltip: {
+        trigger: 'item'
+        },
+        legend: {
+            top: '5%',
+            left: 'center'
+        },
+        series: [
+        {
+            name: 'Payment Method',
+            type: 'pie',
+            radius: '70%',
+            data: arr_vlues,
+            emphasis: {
+            itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+            }
+        }
+        ]
+    };
+}
+//#endregion analysis
+
+//#region Summary functions
 function summary(){
     load_section('summary');
     document.querySelector('#summary-div').innerHTML = '';
@@ -411,7 +478,6 @@ function summary(){
 
     make_expense_vs_income_chart();
 }
-
 function make_expense_vs_income_chart(){
     const actual_chart_divs = document.querySelector('#chart-container-vs');
     if (actual_chart_divs){
@@ -440,7 +506,6 @@ function make_expense_vs_income_chart(){
         }
     );
 }
-
 const get_bar_vs = (dictionary_values) => {
     return {
         title: {
@@ -505,7 +570,6 @@ const get_bar_vs = (dictionary_values) => {
         ]
     };
 }
-
 const get_bar_vs_mobile = (dictionary_values) => {
     return {
         title: {
@@ -572,71 +636,4 @@ const get_bar_vs_mobile = (dictionary_values) => {
         ]
     };
 }
-
-const getPie = (arr_vlues) => {
-    return {
-        tooltip: {
-            trigger: 'item'
-        },
-        legend: {
-            top: '5%',
-            left: 'center'
-        },
-        series: [
-            {
-            name: 'Category',
-            type: 'pie',
-            radius: ['40%', '70%'],
-            avoidLabelOverlap: false,
-            itemStyle: {
-                borderRadius: 10,
-                borderColor: '#fff',
-                borderWidth: 2
-            },
-            label: {
-                show: false,
-                position: 'center'
-            },
-            emphasis: {
-                label: {
-                show: true,
-                fontSize: 40,
-                fontWeight: 'bold'
-                }
-            },
-            labelLine: {
-                show: false
-            },
-            data: arr_vlues
-            }
-        ]
-        };
-}
-
-const getCompletePie = (arr_vlues) => {
-    return {
-        tooltip: {
-        trigger: 'item'
-        },
-        legend: {
-            top: '5%',
-            left: 'center'
-        },
-        series: [
-        {
-            name: 'Payment Method',
-            type: 'pie',
-            radius: '70%',
-            data: arr_vlues,
-            emphasis: {
-            itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-            }
-        }
-        ]
-    };
-}
-
+//#endregion

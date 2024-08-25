@@ -1,3 +1,4 @@
+#region Imports
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
@@ -7,16 +8,15 @@ from django.db import IntegrityError
 from django import forms 
 from datetime import datetime
 import calendar
-# Create your views here.
+#endregion 
 
+#region login, logout, register
 def login_view(request):
     if request.method == "POST":
-
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
-
         # Check if authentication successful
         if user is not None:
             login(request, user)
@@ -36,7 +36,6 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
-
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
@@ -44,7 +43,6 @@ def register(request):
             return render(request, "mymoney/register.html", {
                 "message": "Passwords must match."
             })
-
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
@@ -57,7 +55,9 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "mymoney/register.html")
+#endregion
 
+#region Forms
 class NewExpenseForm(forms.Form):
     amount =  forms.FloatField(required=True)
     date = forms.DateField(widget=forms.DateInput(
@@ -78,6 +78,7 @@ class NewIncomeForm(forms.Form):
     ),required=True)
     category = forms.CharField(max_length=64)
     note = forms.CharField(widget=forms.Textarea(attrs={"rows":"2"}),required=False,max_length=125)
+#endregion
 
 def index(request):
     if request.user.is_authenticated:
@@ -100,8 +101,6 @@ def index(request):
                 )
                 new_expense.save()
                 return HttpResponseRedirect(f"{reverse('index')}?section=list")
-
-                # return HttpResponseRedirect(reverse('index'))
             else:
                 return render(request,"mymoney/index.html?section=list",{
                     "epense_form": form,
@@ -114,38 +113,7 @@ def index(request):
     else:
         return HttpResponseRedirect(reverse("login"))
 
-def add_income(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            form = NewIncomeForm(request.POST)
-            if form.is_valid():
-                amount = form.cleaned_data["amount"]
-                date = form.cleaned_data["date"]
-                category = form.cleaned_data["category"]
-                note = form.cleaned_data["note"]
-
-                new_income = Income(
-                    user = request.user,
-                    amount = amount,
-                    date = date,
-                    category = category,
-                    note = note,
-                )
-                new_income.save()
-                return HttpResponseRedirect(f"{reverse('index')}?section=list-income")
-                # return HttpResponseRedirect(reverse('index'))
-            else:
-                return render(request,"mymoney/index.html",{
-                    "epense_form": NewExpenseForm,
-                    "income_form": form
-                })
-        else:
-            return JsonResponse({
-            "error": "POST request required."
-        }, status=400)
-    else:
-        return HttpResponseRedirect(reverse("login"))
-
+#region only expense functions
 def list(request):
     if request.user.is_authenticated:
         if request.method == "GET":
@@ -184,7 +152,9 @@ def remove_expense(request, expense_id):
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
+#endregion
 
+#region expense anlysis
 def expense_per_category(request):
     if request.user.is_authenticated:
         if request.method == "GET":
@@ -277,7 +247,9 @@ def get_months_and_years(request):
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
+#endregion
 
+#region income functions
 def list_incomes(request):
     if request.user.is_authenticated:
         if request.method == "GET":
@@ -315,7 +287,40 @@ def remove_income(request, income_id):
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
+
+def add_income(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = NewIncomeForm(request.POST)
+            if form.is_valid():
+                amount = form.cleaned_data["amount"]
+                date = form.cleaned_data["date"]
+                category = form.cleaned_data["category"]
+                note = form.cleaned_data["note"]
+
+                new_income = Income(
+                    user = request.user,
+                    amount = amount,
+                    date = date,
+                    category = category,
+                    note = note,
+                )
+                new_income.save()
+                return HttpResponseRedirect(f"{reverse('index')}?section=list-income")
+            else:
+                return render(request,"mymoney/index.html",{
+                    "epense_form": NewExpenseForm,
+                    "income_form": form
+                })
+        else:
+            return JsonResponse({
+            "error": "POST request required."
+        }, status=400)
+    else:
+        return HttpResponseRedirect(reverse("login"))
     
+#endregion 
+
 def summary_graphics(request):
     if request.user.is_authenticated:
         if request.method == 'GET':

@@ -1,3 +1,11 @@
+body {
+  background-color: beige;
+  font-family: sans-serif;
+}
+body h1 {
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
 #main-container {
   margin-top: 70px;
 }
@@ -6,12 +14,12 @@
   color: rgb(14, 126, 22) !important;
   font-size: 35px;
   font-weight: bold;
-  font-family: "Times New Roman", Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
 }
 
 #navbar {
   padding: 0 30px;
-  background-color: rgb(178, 178, 178) !important;
+  background-color: #b8f989 !important;
 }
 
 #navbarSupportedContent {
@@ -47,17 +55,19 @@ span {
 }
 
 .btn:hover {
-  background-color: rgb(118, 179, 26);
-  color: white;
+  background-color: chartreuse;
+  color: black;
+  border-color: black;
 }
 
 .div-form {
-  background-color: rgb(178, 178, 178);
-  border-radius: 10%;
+  background-color: #b8f989;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 6px 0;
 }
 .div-form form {
   width: 100%;
@@ -135,11 +145,12 @@ span {
 }
 
 .movement-container {
+  box-shadow: 0 1px 3px 0;
   margin: 10px 10%;
   border: 2px solid rgb(14, 126, 22);
   border-radius: 5px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
   display: flex;
   flex-direction: column;
   padding: 0px 15px;
@@ -160,6 +171,10 @@ span {
   align-items: center;
   text-align: center;
   justify-content: center;
+}
+
+.movement-container:hover {
+  box-shadow: 0 1px 1px 0;
 }
 
 .movement-div {
@@ -193,7 +208,7 @@ span {
 @media (max-width: 900px) {
   .movement-container {
     margin: 10px 5%;
-    font-size: 18px;
+    font-size: 16px;
   }
 }
 @media (max-width: 740px) {
