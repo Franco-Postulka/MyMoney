@@ -1,17 +1,13 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse 
 from . models import *
 from django.db import IntegrityError
 from django import forms 
-from django.core import serializers
-import json
 from datetime import datetime
 import calendar
 # Create your views here.
-
-
 
 def login_view(request):
     if request.method == "POST":
@@ -32,11 +28,9 @@ def login_view(request):
     else:
         return render(request, "mymoney/login.html")
 
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
 
 def register(request):
     if request.method == "POST":
@@ -64,7 +58,6 @@ def register(request):
     else:
         return render(request, "mymoney/register.html")
 
-
 class NewExpenseForm(forms.Form):
     amount =  forms.FloatField(required=True)
     date = forms.DateField(widget=forms.DateInput(
@@ -85,7 +78,6 @@ class NewIncomeForm(forms.Form):
     ),required=True)
     category = forms.CharField(max_length=64)
     note = forms.CharField(widget=forms.Textarea(attrs={"rows":"2"}),required=False,max_length=125)
-
 
 def index(request):
     if request.user.is_authenticated:
@@ -154,7 +146,6 @@ def add_income(request):
     else:
         return HttpResponseRedirect(reverse("login"))
 
-
 def list(request):
     if request.user.is_authenticated:
         if request.method == "GET":
@@ -178,7 +169,6 @@ def list(request):
     else:
         return HttpResponseRedirect(reverse("login"))
 
-
 def remove_expense(request, expense_id):
     if request.user.is_authenticated:
         if request.method == "DELETE":
@@ -194,18 +184,12 @@ def remove_expense(request, expense_id):
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
-    
 
 def expense_per_category(request):
     if request.user.is_authenticated:
         if request.method == "GET":
-            year = int(request.GET.get('year'))
-            month = int(request.GET.get('month'))
-            # date = timezone.now()
-            first_day_date = datetime(year, month, 1).date()
-            last_day = calendar.monthrange(year, month)
-            last_day_date = datetime(year, month, last_day[1]).date()
-            expenses = Expense.objects.filter(user=request.user, date__gte=first_day_date,date__lte=last_day_date).order_by('-date')
+            expenses = expenses_per_period(request)
+
             arr_categories = []
             already_a_dictionary_value = []
             for expense in expenses:
@@ -229,19 +213,11 @@ def expense_per_category(request):
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
-    
 
 def expense_per_payment(request):
     if request.user.is_authenticated:
         if request.method == "GET":
-            year = int(request.GET.get('year'))
-            month = int(request.GET.get('month'))
-            # date = timezone.now()
-            first_day_date = datetime(year, month, 1).date()
-            last_day = calendar.monthrange(year, month)
-            last_day_date = datetime(year, month, last_day[1]).date()
-            expenses = Expense.objects.filter(user=request.user, date__gte=first_day_date,date__lte=last_day_date).order_by('-date')
-            
+            expenses = expenses_per_period(request)
             arr_payment = []
             already_a_dictionary_value = []
             for expense in expenses:
@@ -257,7 +233,6 @@ def expense_per_payment(request):
                         if dictionary["name"] == str(expense.payment_method):
                             dictionary["value"] += expense.amount
                             break
-
             return JsonResponse(arr_payment,safe=False)
         else:
             return JsonResponse({
@@ -265,7 +240,15 @@ def expense_per_payment(request):
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
-    
+
+def expenses_per_period(request):
+    year = int(request.GET.get('year'))
+    month = int(request.GET.get('month'))
+    first_day_date = datetime(year, month, 1).date()
+    last_day = calendar.monthrange(year, month)
+    last_day_date = datetime(year, month, last_day[1]).date()
+    expenses = Expense.objects.filter(user=request.user, date__gte=first_day_date,date__lte=last_day_date).order_by('-date')
+    return expenses
 
 def get_months_and_years(request):
     if request.user.is_authenticated:
@@ -316,7 +299,7 @@ def list_incomes(request):
         }, status=400)
     else:
         return HttpResponseRedirect(reverse("login"))
-    
+
 def remove_income(request, income_id):
     if request.user.is_authenticated:
         if request.method == "DELETE":
@@ -374,7 +357,6 @@ def summary_graphics(request):
 
                 initial_date_str = str(initial_date)[:7]
                 dictionary["dates"].append(initial_date_str) #Append a month 
-
             return JsonResponse(dictionary,safe=False)
         else:
             return JsonResponse({
