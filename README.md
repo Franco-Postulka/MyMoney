@@ -41,3 +41,12 @@ The project consists of two main directories: the project directory named `money
    ```bash
    python manage.py runserver
 6. Open your browser and navigate to http://127.0.0.1:8000/mymoney to access the application.
+
+## Additional Information
+
+- **eCharts Documentation**: The data visualization in MyMoney is powered by the open-source JavaScript library eCharts. For more information on how to use eCharts, you can refer to the official documentation:
+  - [eCharts Documentation](https://echarts.apache.org/en/option.html#title)
+  - [eCharts examples](https://echarts.apache.org/examples/en/index.html)
+
+These resources provide comprehensive guides and examples for integrating eCharts into web applications. By utilizing eCharts, MyMoney leverages powerful charting capabilities to enhance the financial data analysis features of the application.
+
